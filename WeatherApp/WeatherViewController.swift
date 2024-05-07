@@ -6,14 +6,15 @@
 //
 
 import UIKit
+import SnapKit
 
-class ViewController: UIViewController {
+class WeatherViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
     }
-
-
 }
 
+#Preview {
+    WeatherViewController()
+}
