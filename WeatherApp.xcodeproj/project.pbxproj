@@ -71,15 +71,31 @@
 		6C3090AC2BEAA7CA00C343EE /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
+				6C3090C42BEAB28900C343EE /* WeatherViewController */,
 				6C3090AD2BEAA7CA00C343EE /* AppDelegate.swift */,
 				6C3090AF2BEAA7CA00C343EE /* SceneDelegate.swift */,
-				6C3090B12BEAA7CA00C343EE /* WeatherViewController.swift */,
 				6C3090B92BEAA7CC00C343EE /* Assets.xcassets */,
 				6C3090BB2BEAA7CC00C343EE /* LaunchScreen.storyboard */,
 				6C3090BE2BEAA7CC00C343EE /* Info.plist */,
 				6C3090B62BEAA7CA00C343EE /* WeatherApp.xcdatamodeld */,
 			);
 			path = WeatherApp;
+			sourceTree = "<group>";
+		};
+		6C3090C42BEAB28900C343EE /* WeatherViewController */ = {
+			isa = PBXGroup;
+			children = (
+				6C3090C52BEAB2B500C343EE /* Views */,
+				6C3090B12BEAA7CA00C343EE /* WeatherViewController.swift */,
+			);
+			path = WeatherViewController;
+			sourceTree = "<group>";
+		};
+		6C3090C52BEAB2B500C343EE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		9EBD6790F5AD7B567C20C151 /* Pods */ = {
