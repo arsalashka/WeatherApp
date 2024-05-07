@@ -12,6 +12,7 @@ class WeatherViewController: UIViewController {
     
     private let backgroundImage = UIImageView()
     private let titleContainer = UIView()
+    private let titleView = TitleView()
     
 
     override func viewDidLoad() {
@@ -19,6 +20,9 @@ class WeatherViewController: UIViewController {
         
         setupImageView()
         setupTitleContainer()
+        setupTitleView()
+        
+
     }
     
     private func setupImageView() {
@@ -42,7 +46,18 @@ class WeatherViewController: UIViewController {
         }
     }
     
-    
+    private func setupTitleView() {
+        titleContainer.addSubview(titleView)
+        titleView.setup(TitleView.TitleViewModel(title: "Current location",
+                                                 subtitle: "Kansas City",
+                                                 currentTemp: 65,
+                                                 description: "Mostly Sunny",
+                                                 minTemp: 15,
+                                                 maxTemp: 25))
+        titleView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
 }
 
 #Preview {
