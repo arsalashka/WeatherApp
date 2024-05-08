@@ -13,6 +13,7 @@ class WeatherViewController: UIViewController {
     private let backgroundImage = UIImageView()
     private let titleContainer = UIView()
     private let titleView = TitleView()
+    private let bottomBarView = BottomBarView()
     
 
     override func viewDidLoad() {
@@ -21,7 +22,7 @@ class WeatherViewController: UIViewController {
         setupImageView()
         setupTitleContainer()
         setupTitleView()
-        
+        setupBottomBarView()
 
     }
     
@@ -58,8 +59,17 @@ class WeatherViewController: UIViewController {
             make.edges.equalToSuperview()
         }
     }
+    
+    private func setupBottomBarView() {
+        view.addSubview(bottomBarView)
+        
+        bottomBarView.snp.makeConstraints { make in
+            make.bottom.horizontalEdges.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(60)
+        }
+    }
 }
 
-#Preview {
-    WeatherViewController()
-}
+//#Preview {
+//    WeatherViewController()
+//}
