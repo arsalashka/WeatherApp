@@ -17,6 +17,7 @@ class WeatherViewController: UIViewController {
     
     private let temporaryContentView = UIView()
     private let dayTempLimitsView = DayTempLimitsView()
+    private let hourlyWeatherView = HourlyWeatherView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +28,7 @@ class WeatherViewController: UIViewController {
         setupBottomBarView()
         setupTemporaryContentView()
         setupDayTempLimitsView()
+        setupDayWeatherView()
     }
     
     private func setupImageView() {
@@ -75,7 +77,7 @@ class WeatherViewController: UIViewController {
     
     private func setupTemporaryContentView() {
         view.addSubview(temporaryContentView)
-        temporaryContentView.backgroundColor = .black
+        temporaryContentView.backgroundColor = UIColor(named: "lightBlue")?.withAlphaComponent(0.8)
         temporaryContentView.layer.borderWidth = 1
         temporaryContentView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
         temporaryContentView.layer.cornerRadius = 15
@@ -84,7 +86,7 @@ class WeatherViewController: UIViewController {
             make.top.equalTo(titleContainer.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview().inset(20)
 //            TODO: delete this constraint
-            make.height.equalTo(60)
+//            make.height.equalTo(60)
         }
     }
     
@@ -102,8 +104,62 @@ class WeatherViewController: UIViewController {
             make.width.equalTo(200)
         }
     }
+    
+    private func setupDayWeatherView() {
+        temporaryContentView.addSubview(hourlyWeatherView)
+        
+        hourlyWeatherView.setup([
+            HourlyWeatherView.DataModel(hour: "Now",
+                                        icon: UIImage(systemName: "sun.rain.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 28),
+            HourlyWeatherView.DataModel(hour: "12",
+                                        icon: UIImage(systemName: "cloud.sun.rain.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 28),
+            HourlyWeatherView.DataModel(hour: "1",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 29),
+            HourlyWeatherView.DataModel(hour: "2",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 30),
+            HourlyWeatherView.DataModel(hour: "3",
+                                        icon: UIImage(systemName: "cloud.sun.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 28),
+            HourlyWeatherView.DataModel(hour: "4",
+                                        icon: UIImage(systemName: "cloud.sun.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 27),
+            HourlyWeatherView.DataModel(hour: "5",
+                                        icon: UIImage(systemName: "sun.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 26),
+            HourlyWeatherView.DataModel(hour: "6",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 22),
+            HourlyWeatherView.DataModel(hour: "7",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 18),
+            HourlyWeatherView.DataModel(hour: "8",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 18),
+            HourlyWeatherView.DataModel(hour: "9",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 17),
+            HourlyWeatherView.DataModel(hour: "10",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 17),
+            HourlyWeatherView.DataModel(hour: "11",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 17),
+            HourlyWeatherView.DataModel(hour: "12",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 17),
+            HourlyWeatherView.DataModel(hour: "1",
+                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                        temp: 16),
+        ])
+        
+        hourlyWeatherView.snp.makeConstraints { make in
+            make.top.equalTo(dayTempLimitsView.snp.bottom).offset(16)
+            make.bottom.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(100)
+        }
+    }
 }
-
-//#Preview {
-//    WeatherViewController()
-//}
