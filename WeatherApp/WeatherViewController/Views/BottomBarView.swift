@@ -18,7 +18,7 @@ final class BottomBarView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = UIColor(named: "lightBlue")
+        backgroundColor = .lightBlue
         
         layer.shadowColor = UIColor.white.cgColor
         layer.shadowOpacity = 0.3
@@ -46,9 +46,10 @@ final class BottomBarView: UIView {
     private func setupCityListButton() {
         addSubview(cityListButton)
         cityListButton.setImage(
-            UIImage(systemName: "list.bullet", 
-                    withConfiguration: UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)),
-        for: .normal
+            UIImage(
+                systemName: "list.bullet",
+                withConfiguration: UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)),
+            for: .normal
         )
         cityListButton.tintColor = .white.withAlphaComponent(0.8)
         

@@ -14,7 +14,6 @@ class WeatherViewController: UIViewController {
     private let titleContainer = UIView()
     private let titleView = TitleView()
     private let bottomBarView = BottomBarView()
-    
     private let temporaryContentView = UIView()
     private let dayTempLimitsView = DayTempLimitsView()
     private let hourlyWeatherView = HourlyWeatherView()
@@ -34,7 +33,7 @@ class WeatherViewController: UIViewController {
     private func setupImageView() {
         view.addSubview(backgroundImage)
         backgroundImage.contentMode = .scaleAspectFill
-        backgroundImage.image = UIImage(named: "sky")
+        backgroundImage.image = .sky
         backgroundImage.alpha = 0.8
         
         backgroundImage.snp.makeConstraints { make in
@@ -44,7 +43,6 @@ class WeatherViewController: UIViewController {
     
     private func setupTitleContainer() {
         view.addSubview(titleContainer)
-//        titleContainer.backgroundColor = .black
         
         titleContainer.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -77,7 +75,7 @@ class WeatherViewController: UIViewController {
     
     private func setupTemporaryContentView() {
         view.addSubview(temporaryContentView)
-        temporaryContentView.backgroundColor = UIColor(named: "lightBlue")?.withAlphaComponent(0.8)
+        temporaryContentView.backgroundColor = .lightBlue.withAlphaComponent(0.8)
         temporaryContentView.layer.borderWidth = 1
         temporaryContentView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
         temporaryContentView.layer.cornerRadius = 15
@@ -85,8 +83,6 @@ class WeatherViewController: UIViewController {
         temporaryContentView.snp.makeConstraints { make in
             make.top.equalTo(titleContainer.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview().inset(20)
-//            TODO: delete this constraint
-//            make.height.equalTo(60)
         }
     }
     
@@ -108,53 +104,21 @@ class WeatherViewController: UIViewController {
     private func setupDayWeatherView() {
         temporaryContentView.addSubview(hourlyWeatherView)
         
-        hourlyWeatherView.setup([
-            HourlyWeatherView.DataModel(hour: "Now",
-                                        icon: UIImage(systemName: "sun.rain.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 28),
-            HourlyWeatherView.DataModel(hour: "12",
-                                        icon: UIImage(systemName: "cloud.sun.rain.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 28),
-            HourlyWeatherView.DataModel(hour: "1",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 29),
-            HourlyWeatherView.DataModel(hour: "2",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 30),
-            HourlyWeatherView.DataModel(hour: "3",
-                                        icon: UIImage(systemName: "cloud.sun.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 28),
-            HourlyWeatherView.DataModel(hour: "4",
-                                        icon: UIImage(systemName: "cloud.sun.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 27),
-            HourlyWeatherView.DataModel(hour: "5",
-                                        icon: UIImage(systemName: "sun.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 26),
-            HourlyWeatherView.DataModel(hour: "6",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 22),
-            HourlyWeatherView.DataModel(hour: "7",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 18),
-            HourlyWeatherView.DataModel(hour: "8",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 18),
-            HourlyWeatherView.DataModel(hour: "9",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 17),
-            HourlyWeatherView.DataModel(hour: "10",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 17),
-            HourlyWeatherView.DataModel(hour: "11",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 17),
-            HourlyWeatherView.DataModel(hour: "12",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 17),
-            HourlyWeatherView.DataModel(hour: "1",
-                                        icon: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                        temp: 16),
-        ])
+        var models: [HourlyWeatherView.DataModel] = []
+        let hours = ["Now", "12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "1"]
+        let icons = ["sun.rain.fill", "cloud.sun.rain.fill","sun.max.fill", "sun.max.fill", "cloud.sun.fill", "cloud.sun.fill",
+                     "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill",
+                     "sun.max.fill", "sun.max.fill"]
+        let temps = [28, 28, 29, 30, 28, 27, 26, 24, 22, 18, 18, 17, 17, 16, 16]
+        
+        for index in 0..<hours.count {
+            models.append(HourlyWeatherView.DataModel(
+                hour: hours[index],
+                icon: UIImage(systemName: icons[index])?.withRenderingMode(.alwaysOriginal),
+                temp: temps[index]))
+        }
+        
+        hourlyWeatherView.setup(models)
         
         hourlyWeatherView.snp.makeConstraints { make in
             make.top.equalTo(dayTempLimitsView.snp.bottom).offset(16)

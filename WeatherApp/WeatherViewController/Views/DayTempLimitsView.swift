@@ -77,7 +77,7 @@ final class DayTempLimitsView: UIView {
     
     private func setupTempLimitsView() {
         addSubview(tempLimitsView)
-        tempLimitsView.backgroundColor = UIColor(named: "darkYellow")
+        tempLimitsView.backgroundColor = .darkYellow
         tempLimitsView.layer.borderColor = UIColor(named: "darkBlue")?.withAlphaComponent(0.7).cgColor
         tempLimitsView.layer.borderWidth = 1
         tempLimitsView.layer.cornerRadius = 3
