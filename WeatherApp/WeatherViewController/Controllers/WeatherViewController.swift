@@ -15,7 +15,9 @@ class WeatherViewController: UIViewController {
     private let titleView = TitleView()
     private let bottomBarView = BottomBarView()
     
-
+    private let temporaryContentView = UIView()
+    private let dayTempLimitsView = DayTempLimitsView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,13 +25,15 @@ class WeatherViewController: UIViewController {
         setupTitleContainer()
         setupTitleView()
         setupBottomBarView()
-
+        setupTemporaryContentView()
+        setupDayTempLimitsView()
     }
     
     private func setupImageView() {
         view.addSubview(backgroundImage)
         backgroundImage.contentMode = .scaleAspectFill
         backgroundImage.image = UIImage(named: "sky")
+        backgroundImage.alpha = 0.8
         
         backgroundImage.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -66,6 +70,36 @@ class WeatherViewController: UIViewController {
         bottomBarView.snp.makeConstraints { make in
             make.bottom.horizontalEdges.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(60)
+        }
+    }
+    
+    private func setupTemporaryContentView() {
+        view.addSubview(temporaryContentView)
+        temporaryContentView.backgroundColor = .black
+        temporaryContentView.layer.borderWidth = 1
+        temporaryContentView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
+        temporaryContentView.layer.cornerRadius = 15
+        
+        temporaryContentView.snp.makeConstraints { make in
+            make.top.equalTo(titleContainer.snp.bottom).offset(20)
+            make.horizontalEdges.equalToSuperview().inset(20)
+//            TODO: delete this constraint
+            make.height.equalTo(60)
+        }
+    }
+    
+    private func setupDayTempLimitsView() {
+        temporaryContentView.addSubview(dayTempLimitsView)
+        dayTempLimitsView.setup(DayTempLimitsView.DataModel(minWeekTemp: 15,
+                                                            maxWeekTemp: 32,
+                                                            minDayTemp: 19,
+                                                            maxDayTemp: 30,
+                                                            currentTemp: 28)
+                                )
+        
+        dayTempLimitsView.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().inset(16)
+            make.width.equalTo(200)
         }
     }
 }
