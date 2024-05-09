@@ -1,0 +1,129 @@
+//
+//  ViewController.swift
+//  WeatherApp
+//
+//  Created by Arsalan on 07.05.2024.
+//
+
+import UIKit
+import SnapKit
+
+class WeatherViewController: UIViewController {
+    
+    private let backgroundImage = UIImageView()
+    private let titleContainer = UIView()
+    private let titleView = TitleView()
+    private let bottomBarView = BottomBarView()
+    private let temporaryContentView = UIView()
+    private let dayTempLimitsView = DayTempLimitsView()
+    private let hourlyWeatherView = HourlyWeatherView()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupImageView()
+        setupTitleContainer()
+        setupTitleView()
+        setupBottomBarView()
+        setupTemporaryContentView()
+        setupDayTempLimitsView()
+        setupDayWeatherView()
+    }
+    
+    private func setupImageView() {
+        view.addSubview(backgroundImage)
+        backgroundImage.contentMode = .scaleAspectFill
+        backgroundImage.image = .sky
+        backgroundImage.alpha = 0.8
+        
+        backgroundImage.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func setupTitleContainer() {
+        view.addSubview(titleContainer)
+        
+        titleContainer.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(titleContainer.snp.width).multipliedBy(0.7)
+        }
+    }
+    
+    private func setupTitleView() {
+        titleContainer.addSubview(titleView)
+        titleView.setup(TitleView.TitleViewModel(title: "Current location",
+                                                 subtitle: "Kansas City",
+                                                 currentTemp: 65,
+                                                 description: "Mostly Sunny",
+                                                 minTemp: 15,
+                                                 maxTemp: 25))
+        titleView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    private func setupBottomBarView() {
+        view.addSubview(bottomBarView)
+        
+        bottomBarView.snp.makeConstraints { make in
+            make.bottom.horizontalEdges.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(60)
+        }
+    }
+    
+    private func setupTemporaryContentView() {
+        view.addSubview(temporaryContentView)
+        temporaryContentView.backgroundColor = .lightBlue.withAlphaComponent(0.8)
+        temporaryContentView.layer.borderWidth = 1
+        temporaryContentView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
+        temporaryContentView.layer.cornerRadius = 15
+        
+        temporaryContentView.snp.makeConstraints { make in
+            make.top.equalTo(titleContainer.snp.bottom).offset(20)
+            make.horizontalEdges.equalToSuperview().inset(20)
+        }
+    }
+    
+    private func setupDayTempLimitsView() {
+        temporaryContentView.addSubview(dayTempLimitsView)
+        dayTempLimitsView.setup(DayTempLimitsView.DataModel(minWeekTemp: 15,
+                                                            maxWeekTemp: 32,
+                                                            minDayTemp: 19,
+                                                            maxDayTemp: 30,
+                                                            currentTemp: 28)
+                                )
+        
+        dayTempLimitsView.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().inset(16)
+            make.width.equalTo(200)
+        }
+    }
+    
+    private func setupDayWeatherView() {
+        temporaryContentView.addSubview(hourlyWeatherView)
+        
+        var models: [HourlyWeatherView.DataModel] = []
+        let hours = ["Now", "12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "1"]
+        let icons = ["sun.rain.fill", "cloud.sun.rain.fill","sun.max.fill", "sun.max.fill", "cloud.sun.fill", "cloud.sun.fill",
+                     "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill",
+                     "sun.max.fill", "sun.max.fill"]
+        let temps = [28, 28, 29, 30, 28, 27, 26, 24, 22, 18, 18, 17, 17, 16, 16]
+        
+        for index in 0..<hours.count {
+            models.append(HourlyWeatherView.DataModel(
+                hour: hours[index],
+                icon: UIImage(systemName: icons[index])?.withRenderingMode(.alwaysOriginal),
+                temp: temps[index]))
+        }
+        
+        hourlyWeatherView.setup(models)
+        
+        hourlyWeatherView.snp.makeConstraints { make in
+            make.top.equalTo(dayTempLimitsView.snp.bottom).offset(16)
+            make.bottom.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(100)
+        }
+    }
+}
