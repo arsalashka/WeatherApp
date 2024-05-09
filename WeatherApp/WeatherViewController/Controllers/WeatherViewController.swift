@@ -15,7 +15,7 @@ class WeatherViewController: UIViewController {
     private let titleView = TitleView()
     private let bottomBarView = BottomBarView()
     private let temporaryContentView = UIView()
-    private let dayTempLimitsView = DayTempLimitsView()
+    private let dayWeatherView = DayWeatherView()
     private let hourlyWeatherView = HourlyWeatherView()
     
     override func viewDidLoad() {
@@ -26,10 +26,11 @@ class WeatherViewController: UIViewController {
         setupTitleView()
         setupBottomBarView()
         setupTemporaryContentView()
-        setupDayTempLimitsView()
+        setupDailyWeatherView()
         setupDayWeatherView()
     }
     
+    //  MARK: - Private Methods
     private func setupImageView() {
         view.addSubview(backgroundImage)
         backgroundImage.contentMode = .scaleAspectFill
@@ -75,7 +76,7 @@ class WeatherViewController: UIViewController {
     
     private func setupTemporaryContentView() {
         view.addSubview(temporaryContentView)
-        temporaryContentView.backgroundColor = .lightBlue.withAlphaComponent(0.8)
+        temporaryContentView.backgroundColor = .black
         temporaryContentView.layer.borderWidth = 1
         temporaryContentView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
         temporaryContentView.layer.cornerRadius = 15
@@ -86,18 +87,20 @@ class WeatherViewController: UIViewController {
         }
     }
     
-    private func setupDayTempLimitsView() {
-        temporaryContentView.addSubview(dayTempLimitsView)
-        dayTempLimitsView.setup(DayTempLimitsView.DataModel(minWeekTemp: 15,
-                                                            maxWeekTemp: 32,
-                                                            minDayTemp: 19,
-                                                            maxDayTemp: 30,
-                                                            currentTemp: 28)
-                                )
+    private func setupDailyWeatherView() {
+        temporaryContentView.addSubview(dayWeatherView)
+        dayWeatherView.setup(
+            DayWeatherView.DataModel(title: "Now",
+                                     image: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                     minTemp: 15,
+                                     maxTemp: 32,
+                                     minDayTemp: 19,
+                                     maxDayTemp: 30,
+                                     currentTemp: 28)
+        )
         
-        dayTempLimitsView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().inset(16)
-            make.width.equalTo(200)
+        dayWeatherView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview().inset(16)
         }
     }
     
@@ -121,9 +124,11 @@ class WeatherViewController: UIViewController {
         hourlyWeatherView.setup(models)
         
         hourlyWeatherView.snp.makeConstraints { make in
-            make.top.equalTo(dayTempLimitsView.snp.bottom).offset(16)
+            make.top.equalTo(dayWeatherView.snp.bottom).offset(16)
             make.bottom.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(100)
         }
     }
+    
+    
 }

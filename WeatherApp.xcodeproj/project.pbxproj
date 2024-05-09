@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C141C962BEB38A700315581 /* DayTempLimitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C141C952BEB38A700315581 /* DayTempLimitsView.swift */; };
+		6C141C962BEB38A700315581 /* DayWeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C141C952BEB38A700315581 /* DayWeatherView.swift */; };
 		6C3090AE2BEAA7CA00C343EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3090AD2BEAA7CA00C343EE /* AppDelegate.swift */; };
 		6C3090B02BEAA7CA00C343EE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3090AF2BEAA7CA00C343EE /* SceneDelegate.swift */; };
 		6C3090B22BEAA7CA00C343EE /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3090B12BEAA7CA00C343EE /* WeatherViewController.swift */; };
@@ -22,7 +22,7 @@
 
 /* Begin PBXFileReference section */
 		55D073B5D62EDDD919C000D4 /* Pods_WeatherApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WeatherApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6C141C952BEB38A700315581 /* DayTempLimitsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTempLimitsView.swift; sourceTree = "<group>"; };
+		6C141C952BEB38A700315581 /* DayWeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayWeatherView.swift; sourceTree = "<group>"; };
 		6C3090AA2BEAA7CA00C343EE /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C3090AD2BEAA7CA00C343EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6C3090AF2BEAA7CA00C343EE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -105,7 +105,7 @@
 			children = (
 				6C3090C62BEAC55900C343EE /* TitleView.swift */,
 				6C3090CD2BEAF41000C343EE /* BottomBarView.swift */,
-				6C141C952BEB38A700315581 /* DayTempLimitsView.swift */,
+				6C141C952BEB38A700315581 /* DayWeatherView.swift */,
 				6C3A5C8C2BEBDF0300402CC2 /* HourlyWeatherView.swift */,
 			);
 			path = Views;
@@ -253,7 +253,7 @@
 				6C3090B82BEAA7CA00C343EE /* WeatherApp.xcdatamodeld in Sources */,
 				6C3090B22BEAA7CA00C343EE /* WeatherViewController.swift in Sources */,
 				6C3090AE2BEAA7CA00C343EE /* AppDelegate.swift in Sources */,
-				6C141C962BEB38A700315581 /* DayTempLimitsView.swift in Sources */,
+				6C141C962BEB38A700315581 /* DayWeatherView.swift in Sources */,
 				6C3090CE2BEAF41000C343EE /* BottomBarView.swift in Sources */,
 				6C3090B02BEAA7CA00C343EE /* SceneDelegate.swift in Sources */,
 				6C3090C72BEAC55900C343EE /* TitleView.swift in Sources */,
