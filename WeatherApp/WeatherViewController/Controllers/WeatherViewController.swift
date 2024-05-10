@@ -18,6 +18,7 @@ class WeatherViewController: UIViewController {
     private let dayWeatherView = DayWeatherView()
     private let hourlyWeatherView = HourlyWeatherView()
     private let searchField = UISearchTextField()
+    private let cityView = CityView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +31,7 @@ class WeatherViewController: UIViewController {
         setupDailyWeatherView()
         setupDayWeatherView()
         setupSearchField()
+        setupCityView()
     }
     
     //  MARK: - Private Methods
@@ -159,9 +161,22 @@ class WeatherViewController: UIViewController {
             make.top.equalTo(hourlyWeatherView.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(40)
-            
-//            TODO: delete constraint
-            make.bottom.equalToSuperview().inset(16)
+        }
+    }
+    
+    private func setupCityView() {
+        temporaryContentView.addSubview(cityView)
+        cityView.setup(CityView.InputModel(
+            title: "Current location",
+            subtitle: "Kansas City",
+            description: "Mostly Sunny",
+            minTemp: 19,
+            maxTemp: 32,
+            currentTemp: 28))
+        
+        cityView.snp.makeConstraints { make in
+            make.top.equalTo(searchField.snp.bottom).offset(16)
+            make.bottom.horizontalEdges.equalToSuperview().inset(16)
         }
     }
 }
