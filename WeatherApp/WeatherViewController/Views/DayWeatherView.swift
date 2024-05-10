@@ -175,7 +175,7 @@ extension DayWeatherView {
         private func setupTempLimitsView() {
             addSubview(tempLimitsView)
             tempLimitsView.backgroundColor = .darkYellow
-            tempLimitsView.layer.borderColor = UIColor(named: "darkBlue")?.withAlphaComponent(0.7).cgColor
+            tempLimitsView.layer.borderColor = UIColor.darkBlue.withAlphaComponent(0.7).cgColor
             tempLimitsView.layer.borderWidth = 1
             tempLimitsView.layer.cornerRadius = 3
             
@@ -188,7 +188,7 @@ extension DayWeatherView {
         private func setupCurrentTempView() {
             addSubview(currentTempView)
             currentTempView.backgroundColor = .white
-            currentTempView.layer.borderColor = UIColor(named: "darkBlue")?.withAlphaComponent(0.7).cgColor
+            currentTempView.layer.borderColor = UIColor.darkBlue.withAlphaComponent(0.7).cgColor
             currentTempView.layer.borderWidth = 1
             currentTempView.layer.cornerRadius = 3
             

@@ -8,8 +8,30 @@
 import UIKit
 import SnapKit
 
-class WeatherViewController: UIViewController {
+final class WeatherViewController: UIViewController {
     
+    //  MARK: - Constants
+    private enum TitleViewConstants: Int {
+        case currentTemp = 28
+        case minTemp = 15
+        case maxTemp = 32
+    }
+    
+    private enum DayWeatherViewConstants: Int {
+        case minTemp = 15
+        case maxTemp = 32
+        case minDayTemp = 19
+        case maxDayTemp = 30
+        case currentTemp = 28
+    }
+    
+    private enum CityViewConstants: Int {
+        case minTemp = 19
+        case maxTemp = 32
+        case currentTemp = 28
+    }
+    
+    //  MARK: - Properties
     private let backgroundImage = UIImageView()
     private let titleContainer = UIView()
     private let titleView = TitleView()
@@ -60,10 +82,10 @@ class WeatherViewController: UIViewController {
         titleContainer.addSubview(titleView)
         titleView.setup(TitleView.TitleViewModel(title: "Current location",
                                                  subtitle: "Kansas City",
-                                                 currentTemp: 65,
+                                                 currentTemp: TitleViewConstants.currentTemp.rawValue,
                                                  description: "Mostly Sunny",
-                                                 minTemp: 15,
-                                                 maxTemp: 25))
+                                                 minTemp: TitleViewConstants.minTemp.rawValue,
+                                                 maxTemp: TitleViewConstants.maxTemp.rawValue))
         titleView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -96,11 +118,11 @@ class WeatherViewController: UIViewController {
         dayWeatherView.setup(
             DayWeatherView.DataModel(title: "Now",
                                      image: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                     minTemp: 15,
-                                     maxTemp: 32,
-                                     minDayTemp: 19,
-                                     maxDayTemp: 30,
-                                     currentTemp: 28)
+                                     minTemp: Double(DayWeatherViewConstants.minTemp.rawValue),
+                                     maxTemp: Double(DayWeatherViewConstants.maxTemp.rawValue),
+                                     minDayTemp: Double(DayWeatherViewConstants.minDayTemp.rawValue),
+                                     maxDayTemp: Double(DayWeatherViewConstants.maxDayTemp.rawValue),
+                                     currentTemp: Double(DayWeatherViewConstants.currentTemp.rawValue))
         )
         
         dayWeatherView.snp.makeConstraints { make in
@@ -170,9 +192,9 @@ class WeatherViewController: UIViewController {
             title: "Current location",
             subtitle: "Kansas City",
             description: "Mostly Sunny",
-            minTemp: 19,
-            maxTemp: 32,
-            currentTemp: 28))
+            minTemp: CityViewConstants.minTemp.rawValue,
+            maxTemp: CityViewConstants.maxTemp.rawValue,
+            currentTemp: CityViewConstants.currentTemp.rawValue))
         
         cityView.snp.makeConstraints { make in
             make.top.equalTo(searchField.snp.bottom).offset(16)
