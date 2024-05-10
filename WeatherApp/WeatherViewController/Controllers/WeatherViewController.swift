@@ -17,6 +17,7 @@ class WeatherViewController: UIViewController {
     private let temporaryContentView = UIView()
     private let dayWeatherView = DayWeatherView()
     private let hourlyWeatherView = HourlyWeatherView()
+    private let searchField = UISearchTextField()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +29,7 @@ class WeatherViewController: UIViewController {
         setupTemporaryContentView()
         setupDailyWeatherView()
         setupDayWeatherView()
+        setupSearchField()
     }
     
     //  MARK: - Private Methods
@@ -125,10 +127,41 @@ class WeatherViewController: UIViewController {
         
         hourlyWeatherView.snp.makeConstraints { make in
             make.top.equalTo(dayWeatherView.snp.bottom).offset(16)
-            make.bottom.horizontalEdges.equalToSuperview().inset(16)
+            make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(100)
         }
     }
     
-    
+    private func setupSearchField() {
+        temporaryContentView.addSubview(searchField)
+        
+        let tintColor = UIColor.white.withAlphaComponent(0.5)
+        searchField.attributedPlaceholder = NSAttributedString(
+            string: "Search for a city or airport",
+            attributes: [.foregroundColor: tintColor]
+        )
+        searchField.backgroundColor = .white.withAlphaComponent(0.1)
+        searchField.tintColor = .white
+        searchField.leftView?.tintColor = tintColor
+        
+        let rightView = UIButton()
+        rightView.setImage(UIImage(systemName: "list.bullet"), for: .normal)
+        rightView.tintColor = tintColor
+        
+        rightView.addAction(UIAction {_ in
+            print(#function)
+        }, for: .touchUpInside)
+        
+        searchField.rightView = rightView
+        searchField.rightViewMode = .unlessEditing
+        
+        searchField.snp.makeConstraints { make in
+            make.top.equalTo(hourlyWeatherView.snp.bottom).offset(16)
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(40)
+            
+//            TODO: delete constraint
+            make.bottom.equalToSuperview().inset(16)
+        }
+    }
 }
