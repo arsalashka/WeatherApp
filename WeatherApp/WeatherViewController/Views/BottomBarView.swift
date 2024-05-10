@@ -53,6 +53,10 @@ final class BottomBarView: UIView {
         )
         cityListButton.tintColor = .white.withAlphaComponent(0.8)
         
+        cityListButton.addAction(UIAction {_ in
+            print(#function)
+        }, for: .touchUpInside)
+        
         cityListButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.trailing.equalToSuperview().inset(20)

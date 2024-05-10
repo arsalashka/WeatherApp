@@ -8,15 +8,39 @@
 import UIKit
 import SnapKit
 
-class WeatherViewController: UIViewController {
+final class WeatherViewController: UIViewController {
     
+    //  MARK: - Constants
+    private enum TitleViewConstants: Int {
+        case currentTemp = 28
+        case minTemp = 15
+        case maxTemp = 32
+    }
+    
+    private enum DayWeatherViewConstants: Int {
+        case minTemp = 15
+        case maxTemp = 32
+        case minDayTemp = 19
+        case maxDayTemp = 30
+        case currentTemp = 28
+    }
+    
+    private enum CityViewConstants: Int {
+        case minTemp = 19
+        case maxTemp = 32
+        case currentTemp = 28
+    }
+    
+    //  MARK: - Properties
     private let backgroundImage = UIImageView()
     private let titleContainer = UIView()
     private let titleView = TitleView()
     private let bottomBarView = BottomBarView()
     private let temporaryContentView = UIView()
-    private let dayTempLimitsView = DayTempLimitsView()
+    private let dayWeatherView = DayWeatherView()
     private let hourlyWeatherView = HourlyWeatherView()
+    private let searchField = UISearchTextField()
+    private let cityView = CityView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,10 +50,13 @@ class WeatherViewController: UIViewController {
         setupTitleView()
         setupBottomBarView()
         setupTemporaryContentView()
-        setupDayTempLimitsView()
+        setupDailyWeatherView()
         setupDayWeatherView()
+        setupSearchField()
+        setupCityView()
     }
     
+    //  MARK: - Private Methods
     private func setupImageView() {
         view.addSubview(backgroundImage)
         backgroundImage.contentMode = .scaleAspectFill
@@ -55,10 +82,10 @@ class WeatherViewController: UIViewController {
         titleContainer.addSubview(titleView)
         titleView.setup(TitleView.TitleViewModel(title: "Current location",
                                                  subtitle: "Kansas City",
-                                                 currentTemp: 65,
+                                                 currentTemp: TitleViewConstants.currentTemp.rawValue,
                                                  description: "Mostly Sunny",
-                                                 minTemp: 15,
-                                                 maxTemp: 25))
+                                                 minTemp: TitleViewConstants.minTemp.rawValue,
+                                                 maxTemp: TitleViewConstants.maxTemp.rawValue))
         titleView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -75,7 +102,7 @@ class WeatherViewController: UIViewController {
     
     private func setupTemporaryContentView() {
         view.addSubview(temporaryContentView)
-        temporaryContentView.backgroundColor = .lightBlue.withAlphaComponent(0.8)
+        temporaryContentView.backgroundColor = .black
         temporaryContentView.layer.borderWidth = 1
         temporaryContentView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
         temporaryContentView.layer.cornerRadius = 15
@@ -86,18 +113,20 @@ class WeatherViewController: UIViewController {
         }
     }
     
-    private func setupDayTempLimitsView() {
-        temporaryContentView.addSubview(dayTempLimitsView)
-        dayTempLimitsView.setup(DayTempLimitsView.DataModel(minWeekTemp: 15,
-                                                            maxWeekTemp: 32,
-                                                            minDayTemp: 19,
-                                                            maxDayTemp: 30,
-                                                            currentTemp: 28)
-                                )
+    private func setupDailyWeatherView() {
+        temporaryContentView.addSubview(dayWeatherView)
+        dayWeatherView.setup(
+            DayWeatherView.DataModel(title: "Now",
+                                     image: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
+                                     minTemp: Double(DayWeatherViewConstants.minTemp.rawValue),
+                                     maxTemp: Double(DayWeatherViewConstants.maxTemp.rawValue),
+                                     minDayTemp: Double(DayWeatherViewConstants.minDayTemp.rawValue),
+                                     maxDayTemp: Double(DayWeatherViewConstants.maxDayTemp.rawValue),
+                                     currentTemp: Double(DayWeatherViewConstants.currentTemp.rawValue))
+        )
         
-        dayTempLimitsView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().inset(16)
-            make.width.equalTo(200)
+        dayWeatherView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview().inset(16)
         }
     }
     
@@ -121,9 +150,55 @@ class WeatherViewController: UIViewController {
         hourlyWeatherView.setup(models)
         
         hourlyWeatherView.snp.makeConstraints { make in
-            make.top.equalTo(dayTempLimitsView.snp.bottom).offset(16)
-            make.bottom.horizontalEdges.equalToSuperview().inset(16)
+            make.top.equalTo(dayWeatherView.snp.bottom).offset(16)
+            make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(100)
+        }
+    }
+    
+    private func setupSearchField() {
+        temporaryContentView.addSubview(searchField)
+        
+        let tintColor = UIColor.white.withAlphaComponent(0.5)
+        searchField.attributedPlaceholder = NSAttributedString(
+            string: "Search for a city or airport",
+            attributes: [.foregroundColor: tintColor]
+        )
+        searchField.backgroundColor = .white.withAlphaComponent(0.1)
+        searchField.tintColor = .white
+        searchField.leftView?.tintColor = tintColor
+        
+        let rightView = UIButton()
+        rightView.setImage(UIImage(systemName: "list.bullet"), for: .normal)
+        rightView.tintColor = tintColor
+        
+        rightView.addAction(UIAction {_ in
+            print(#function)
+        }, for: .touchUpInside)
+        
+        searchField.rightView = rightView
+        searchField.rightViewMode = .unlessEditing
+        
+        searchField.snp.makeConstraints { make in
+            make.top.equalTo(hourlyWeatherView.snp.bottom).offset(16)
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(40)
+        }
+    }
+    
+    private func setupCityView() {
+        temporaryContentView.addSubview(cityView)
+        cityView.setup(CityView.InputModel(
+            title: "Current location",
+            subtitle: "Kansas City",
+            description: "Mostly Sunny",
+            minTemp: CityViewConstants.minTemp.rawValue,
+            maxTemp: CityViewConstants.maxTemp.rawValue,
+            currentTemp: CityViewConstants.currentTemp.rawValue))
+        
+        cityView.snp.makeConstraints { make in
+            make.top.equalTo(searchField.snp.bottom).offset(16)
+            make.bottom.horizontalEdges.equalToSuperview().inset(16)
         }
     }
 }
