@@ -14,6 +14,8 @@ final class BottomBarView: UIView {
     private let dividerView = UIView()
     private let cityListButton = UIButton()
     
+    var cityListButtonPressed: (() -> Void)?
+    
     //  MARK: - Initialisation
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -54,7 +56,7 @@ final class BottomBarView: UIView {
         cityListButton.tintColor = .white.withAlphaComponent(0.8)
         
         cityListButton.addAction(UIAction {_ in
-            print(#function)
+            self.cityListButtonPressed?()
         }, for: .touchUpInside)
         
         cityListButton.snp.makeConstraints { make in
