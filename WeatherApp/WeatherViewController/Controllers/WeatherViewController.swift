@@ -25,12 +25,6 @@ final class WeatherViewController: UIViewController {
         case currentTemp = 28
     }
     
-    private enum CityViewConstants: Int {
-        case minTemp = 19
-        case maxTemp = 32
-        case currentTemp = 28
-    }
-    
     //  MARK: - Properties
     private let backgroundImage = UIImageView()
     private let titleContainer = UIView()
@@ -39,8 +33,6 @@ final class WeatherViewController: UIViewController {
     private let temporaryContentView = UIView()
     private let dayWeatherView = DayWeatherView()
     private let hourlyWeatherView = HourlyWeatherView()
-    private let searchField = UISearchTextField()
-    private let cityView = CityView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,8 +44,6 @@ final class WeatherViewController: UIViewController {
         setupTemporaryContentView()
         setupDailyWeatherView()
         setupDayWeatherView()
-        setupSearchField()
-        setupCityView()
     }
     
     //  MARK: - Private Methods
@@ -93,6 +83,13 @@ final class WeatherViewController: UIViewController {
     
     private func setupBottomBarView() {
         view.addSubview(bottomBarView)
+        
+        bottomBarView.cityListButtonPressed = { [weak self] in
+            let citySelectionVC = CitySelectionViewController()
+            
+            citySelectionVC.modalPresentationStyle = .fullScreen
+            self?.present(citySelectionVC, animated: true)
+        }
         
         bottomBarView.snp.makeConstraints { make in
             make.bottom.horizontalEdges.equalToSuperview()
@@ -153,52 +150,7 @@ final class WeatherViewController: UIViewController {
             make.top.equalTo(dayWeatherView.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(100)
-        }
-    }
-    
-    private func setupSearchField() {
-        temporaryContentView.addSubview(searchField)
-        
-        let tintColor = UIColor.white.withAlphaComponent(0.5)
-        searchField.attributedPlaceholder = NSAttributedString(
-            string: "Search for a city or airport",
-            attributes: [.foregroundColor: tintColor]
-        )
-        searchField.backgroundColor = .white.withAlphaComponent(0.1)
-        searchField.tintColor = .white
-        searchField.leftView?.tintColor = tintColor
-        
-        let rightView = UIButton()
-        rightView.setImage(UIImage(systemName: "list.bullet"), for: .normal)
-        rightView.tintColor = tintColor
-        
-        rightView.addAction(UIAction {_ in
-            print(#function)
-        }, for: .touchUpInside)
-        
-        searchField.rightView = rightView
-        searchField.rightViewMode = .unlessEditing
-        
-        searchField.snp.makeConstraints { make in
-            make.top.equalTo(hourlyWeatherView.snp.bottom).offset(16)
-            make.horizontalEdges.equalToSuperview().inset(16)
-            make.height.equalTo(40)
-        }
-    }
-    
-    private func setupCityView() {
-        temporaryContentView.addSubview(cityView)
-        cityView.setup(CityView.InputModel(
-            title: "Current location",
-            subtitle: "Kansas City",
-            description: "Mostly Sunny",
-            minTemp: CityViewConstants.minTemp.rawValue,
-            maxTemp: CityViewConstants.maxTemp.rawValue,
-            currentTemp: CityViewConstants.currentTemp.rawValue))
-        
-        cityView.snp.makeConstraints { make in
-            make.top.equalTo(searchField.snp.bottom).offset(16)
-            make.bottom.horizontalEdges.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().inset(16)
         }
     }
 }
