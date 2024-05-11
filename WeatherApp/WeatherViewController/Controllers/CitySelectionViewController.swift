@@ -11,7 +11,13 @@ import SnapKit
 final class CitySelectionViewController: UIViewController {
     
     //  MARK: - Constants
-    private enum CityViewConstants: Int {
+    private enum CityViewTitleConstants: String {
+        case title = "Current location"
+        case subtitle = "Kansas City"
+        case description = "Mostly Sunny"
+    }
+    
+    private enum CityViewTempConstants: Int {
         case minTemp = 19
         case maxTemp = 32
         case currentTemp = 28
@@ -82,12 +88,12 @@ final class CitySelectionViewController: UIViewController {
     private func setupCityView() {
         view.addSubview(cityView)
         cityView.setup(CityView.InputModel(
-            title: "Current location",
-            subtitle: "Kansas City",
-            description: "Mostly Sunny",
-            minTemp: CityViewConstants.minTemp.rawValue,
-            maxTemp: CityViewConstants.maxTemp.rawValue,
-            currentTemp: CityViewConstants.currentTemp.rawValue))
+            title: CityViewTitleConstants.title.rawValue,
+            subtitle: CityViewTitleConstants.subtitle.rawValue,
+            description: CityViewTitleConstants.description.rawValue,
+            minTemp: CityViewTempConstants.minTemp.rawValue,
+            maxTemp: CityViewTempConstants.maxTemp.rawValue,
+            currentTemp: CityViewTempConstants.currentTemp.rawValue))
         
         cityView.snp.makeConstraints { make in
             make.top.equalTo(searchField.snp.bottom).offset(16)
@@ -126,15 +132,13 @@ final class CitySelectionViewController: UIViewController {
         }
     }
     
-    //  MARK: - IBActions
+    //  MARK: - Button Pressed Methods
     @IBAction func editUnitSelectionButtonPressed() {
         
-        if unitSelectionView.isHidden {
-            unitSelectionView.isHidden = false
-            editUnitSelectionButton.setTitle("Hide UnitSelectionView", for: .normal)
-        } else {
-            unitSelectionView.isHidden = true
-            editUnitSelectionButton.setTitle("Show UnitSelectionView", for: .normal)
-        }
+        unitSelectionView.isHidden  = unitSelectionView.isHidden ? false : true
+        editUnitSelectionButton.setTitle(
+            unitSelectionView.isHidden ? "Show UnitSelectionView" : "Hide UnitSelectionView", 
+            for: .normal
+        )
     }
 }
