@@ -17,20 +17,25 @@ final class UnitSelectionView: UIView {
         
         var unitLabel: String {
             switch self {
-            case .Celsius:      return "Celsius"
-            case .Fahrenheit:   return "Fahrenheit"
-            case .Kelvin:       return "Kelvin"
+            case .Celsius: return "Celsius"
+            case .Fahrenheit: return "Fahrenheit"
+            case .Kelvin: return "Kelvin"
             }
         }
     }
     
+    private enum Constants: Int {
+        case numberOfPickerViewComponents = 1
+        case rowHeightForComponent = 40
+    }
+    
     private var tempUnitSelected = TempUnit.Celsius
     private let pickerView = UIPickerView()
-    private let numberOfPickerViewComponents = 1
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        backgroundColor = .white.withAlphaComponent(0.1)
         setupPickerView()
     }
     
@@ -38,6 +43,7 @@ final class UnitSelectionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //  MARK: - Private Methods
     private func setupPickerView() {
         addSubview(pickerView)
         
@@ -50,9 +56,10 @@ final class UnitSelectionView: UIView {
     }
 }
 
+//  MARK: - UIPickerViewDataSource
 extension UnitSelectionView: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        numberOfPickerViewComponents
+        Constants.numberOfPickerViewComponents.rawValue
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
@@ -60,6 +67,7 @@ extension UnitSelectionView: UIPickerViewDataSource {
     }
 }
 
+//  MARK: - UIPickerViewDelegate
 extension UnitSelectionView: UIPickerViewDelegate {
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
@@ -69,11 +77,15 @@ extension UnitSelectionView: UIPickerViewDelegate {
         pickerLabel.font = .systemFont(ofSize: 15, weight: .medium)
         pickerLabel.textAlignment = .center
         pickerLabel.textColor = .white
-        pickerLabel.backgroundColor = .white.withAlphaComponent(0.8)
+        pickerLabel.backgroundColor = .white.withAlphaComponent(0.2)
         pickerLabel.layer.cornerRadius = 8
         pickerLabel.layer.masksToBounds = true
         
         return pickerLabel
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
+        CGFloat(Constants.rowHeightForComponent.rawValue)
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
@@ -85,4 +97,3 @@ extension UnitSelectionView: UIPickerViewDelegate {
         print(tempUnitSelected.unitLabel)
     }
 }
-

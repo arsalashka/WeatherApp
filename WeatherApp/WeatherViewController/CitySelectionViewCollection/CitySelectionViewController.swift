@@ -29,6 +29,8 @@ final class CitySelectionViewController: UIViewController {
     private let cityView = CityView()
     private let editUnitSelectionButton = UIButton()
     private let unitSelectionView = UnitSelectionView()
+    private let showWebViewButton = UIButton()
+    private let urlString = "https://meteoinfo.ru/t-scale"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +41,7 @@ final class CitySelectionViewController: UIViewController {
         setupSearchField()
         setupCityView()
         setupEditUnitSelectionButton()
-        setupUnitSelectionView()
+        setupShowWebViewButton()
         setupUnitSelectionView()
     }
     
@@ -121,26 +123,53 @@ final class CitySelectionViewController: UIViewController {
         }
     }
     
+    private func setupShowWebViewButton() {
+        view.addSubview(showWebViewButton)
+        showWebViewButton.setTitle("Show Info", for: .normal)
+        showWebViewButton.backgroundColor = .white.withAlphaComponent(0.4)
+        showWebViewButton.layer.cornerRadius = 8
+        
+        showWebViewButton.addTarget(
+            self,
+            action: #selector(showWebViewButtonPressed),
+            for: .touchUpInside
+        )
+        
+        showWebViewButton.snp.makeConstraints { make in
+            make.top.equalTo(editUnitSelectionButton.snp.bottom).offset(16)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(210)
+        }
+    }
+    
     private func setupUnitSelectionView() {
         view.addSubview(unitSelectionView)
         unitSelectionView.isHidden = true
         
         unitSelectionView.snp.makeConstraints { make in
-            make.top.equalTo(editUnitSelectionButton.snp.bottom)
+            make.top.equalTo(showWebViewButton.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
-            make.width.equalTo(100)
-            make.height.equalTo(260)
+            make.size.equalTo(150)
         }
     }
     
     //  MARK: - Button Pressed Methods
     @IBAction func editUnitSelectionButtonPressed() {
-        
         unitSelectionView.isHidden  = unitSelectionView.isHidden ? false : true
         editUnitSelectionButton.setTitle(
-            unitSelectionView.isHidden ? "Show UnitSelectionView" : "Hide UnitSelectionView", 
+            unitSelectionView.isHidden ? "Show UnitSelectionView" : "Hide UnitSelectionView",
             for: .normal
         )
+    }
+    
+    @IBAction func showWebViewButtonPressed() {
+        let webVC = WebViewController()
+        
+        if let url = URL(string: urlString) {
+            webVC.open(url)
+        }
+        
+        present(webVC, animated: true)
     }
     
     //  MARK: - Touches Methods
