@@ -28,7 +28,7 @@ final class CitySelectionViewController: UIViewController {
     private let searchField = UISearchTextField()
     private let cityView = CityView()
     private let editUnitSelectionButton = UIButton()
-    private let unitSelectionView = UIView()
+    private let unitSelectionView = UnitSelectionView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +39,7 @@ final class CitySelectionViewController: UIViewController {
         setupSearchField()
         setupCityView()
         setupEditUnitSelectionButton()
+        setupUnitSelectionView()
         setupUnitSelectionView()
     }
     
@@ -103,7 +104,7 @@ final class CitySelectionViewController: UIViewController {
     
     private func setupEditUnitSelectionButton() {
         view.addSubview(editUnitSelectionButton)
-        editUnitSelectionButton.setTitle("Hide UnitSelectionView", for: .normal)
+        editUnitSelectionButton.setTitle("Show UnitSelectionView", for: .normal)
         editUnitSelectionButton.backgroundColor = .white.withAlphaComponent(0.4)
         editUnitSelectionButton.layer.cornerRadius = 8
         
@@ -122,13 +123,13 @@ final class CitySelectionViewController: UIViewController {
     
     private func setupUnitSelectionView() {
         view.addSubview(unitSelectionView)
-        unitSelectionView.backgroundColor = .purple
-        unitSelectionView.layer.cornerRadius = 12
+        unitSelectionView.isHidden = true
         
         unitSelectionView.snp.makeConstraints { make in
-            make.top.equalTo(editUnitSelectionButton.snp.bottom).offset(16)
+            make.top.equalTo(editUnitSelectionButton.snp.bottom)
             make.centerX.equalToSuperview()
-            make.size.equalTo(100)
+            make.width.equalTo(100)
+            make.height.equalTo(260)
         }
     }
     
@@ -140,5 +141,12 @@ final class CitySelectionViewController: UIViewController {
             unitSelectionView.isHidden ? "Show UnitSelectionView" : "Hide UnitSelectionView", 
             for: .normal
         )
+    }
+    
+    //  MARK: - Touches Methods
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if !unitSelectionView.isHidden {
+            editUnitSelectionButtonPressed()
+        }
     }
 }
