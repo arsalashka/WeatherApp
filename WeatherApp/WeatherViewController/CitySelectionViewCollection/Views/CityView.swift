@@ -129,7 +129,3 @@ final class CityView: UIView {
         }
     }
 }
-
-#Preview {
-    CityView()
-}
