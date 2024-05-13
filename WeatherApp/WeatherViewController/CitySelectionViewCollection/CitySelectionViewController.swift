@@ -11,10 +11,17 @@ import SnapKit
 final class CitySelectionViewController: UIViewController {
     
     //  MARK: - Constants
-    private enum CityViewTitleConstants: String {
+    private enum Constants: String {
         case title = "Current location"
         case subtitle = "Kansas City"
         case description = "Mostly Sunny"
+        case urlString = "https://meteoinfo.ru/t-scale"
+        case titleLabelText = "Weather"
+        case searchFieldPlaceholder = "Search for a city or airport"
+        case rightViewOfSearchField = "list.bullet"
+        case unitSelectionButtonShowTitle = "Show UnitSelectionView"
+        case unitSelectionButtonHideTitle = "Hide UnitSelectionView"
+        case showWebViewButtonTitle = "Show Info"
     }
     
     private enum CityViewTempConstants: Int {
@@ -30,8 +37,8 @@ final class CitySelectionViewController: UIViewController {
     private let editUnitSelectionButton = UIButton()
     private let unitSelectionView = UnitSelectionView()
     private let showWebViewButton = UIButton()
-    private let urlString = "https://meteoinfo.ru/t-scale"
     
+    //  MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -45,10 +52,17 @@ final class CitySelectionViewController: UIViewController {
         setupUnitSelectionView()
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if !unitSelectionView.isHidden {
+            editUnitSelectionButtonPressed()
+        }
+        searchField.endEditing(true)
+    }
+    
     //  MARK: - Private Methods
     private func setupTitleLabel() {
         view.addSubview(titleLabel)
-        titleLabel.text = "Weather"
+        titleLabel.text = Constants.titleLabelText.rawValue
         titleLabel.font = .systemFont(ofSize: 32, weight: .bold)
         titleLabel.textColor = .white
         
@@ -63,7 +77,7 @@ final class CitySelectionViewController: UIViewController {
         
         let tintColor = UIColor.white.withAlphaComponent(0.5)
         searchField.attributedPlaceholder = NSAttributedString(
-            string: "Search for a city or airport",
+            string: Constants.searchFieldPlaceholder.rawValue,
             attributes: [.foregroundColor: tintColor]
         )
         searchField.backgroundColor = .white.withAlphaComponent(0.1)
@@ -71,7 +85,7 @@ final class CitySelectionViewController: UIViewController {
         searchField.leftView?.tintColor = tintColor
         
         let rightView = UIButton()
-        rightView.setImage(UIImage(systemName: "list.bullet"), for: .normal)
+        rightView.setImage(UIImage(systemName: Constants.rightViewOfSearchField.rawValue), for: .normal)
         rightView.tintColor = tintColor
         
         rightView.addAction(UIAction {_ in
@@ -91,9 +105,9 @@ final class CitySelectionViewController: UIViewController {
     private func setupCityView() {
         view.addSubview(cityView)
         cityView.setup(CityView.InputModel(
-            title: CityViewTitleConstants.title.rawValue,
-            subtitle: CityViewTitleConstants.subtitle.rawValue,
-            description: CityViewTitleConstants.description.rawValue,
+            title: Constants.title.rawValue,
+            subtitle: Constants.subtitle.rawValue,
+            description: Constants.description.rawValue,
             minTemp: CityViewTempConstants.minTemp.rawValue,
             maxTemp: CityViewTempConstants.maxTemp.rawValue,
             currentTemp: CityViewTempConstants.currentTemp.rawValue))
@@ -106,7 +120,7 @@ final class CitySelectionViewController: UIViewController {
     
     private func setupEditUnitSelectionButton() {
         view.addSubview(editUnitSelectionButton)
-        editUnitSelectionButton.setTitle("Show UnitSelectionView", for: .normal)
+        editUnitSelectionButton.setTitle(Constants.unitSelectionButtonShowTitle.rawValue, for: .normal)
         editUnitSelectionButton.backgroundColor = .white.withAlphaComponent(0.4)
         editUnitSelectionButton.layer.cornerRadius = 8
         
@@ -125,7 +139,7 @@ final class CitySelectionViewController: UIViewController {
     
     private func setupShowWebViewButton() {
         view.addSubview(showWebViewButton)
-        showWebViewButton.setTitle("Show Info", for: .normal)
+        showWebViewButton.setTitle(Constants.showWebViewButtonTitle.rawValue, for: .normal)
         showWebViewButton.backgroundColor = .white.withAlphaComponent(0.4)
         showWebViewButton.layer.cornerRadius = 8
         
@@ -157,7 +171,7 @@ final class CitySelectionViewController: UIViewController {
     @IBAction func editUnitSelectionButtonPressed() {
         unitSelectionView.isHidden  = unitSelectionView.isHidden ? false : true
         editUnitSelectionButton.setTitle(
-            unitSelectionView.isHidden ? "Show UnitSelectionView" : "Hide UnitSelectionView",
+            unitSelectionView.isHidden ? Constants.unitSelectionButtonShowTitle.rawValue : Constants.unitSelectionButtonHideTitle.rawValue,
             for: .normal
         )
     }
@@ -165,17 +179,10 @@ final class CitySelectionViewController: UIViewController {
     @IBAction func showWebViewButtonPressed() {
         let webVC = WebViewController()
         
-        if let url = URL(string: urlString) {
+        if let url = URL(string: Constants.urlString.rawValue) {
             webVC.open(url)
         }
         
         present(webVC, animated: true)
-    }
-    
-    //  MARK: - Touches Methods
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if !unitSelectionView.isHidden {
-            editUnitSelectionButtonPressed()
-        }
     }
 }
