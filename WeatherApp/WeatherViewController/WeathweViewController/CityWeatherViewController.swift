@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class WeatherViewController: UIViewController {
+final class CityWeatherViewController: UIViewController {
     
     //  MARK: - Constants
     private enum TitleViewConstants: Int {
@@ -36,7 +36,7 @@ final class WeatherViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         setupImageView()
         setupTitleContainer()
         setupTitleView()
@@ -44,6 +44,19 @@ final class WeatherViewController: UIViewController {
         setupTemporaryContentView()
         setupDailyWeatherView()
         setupDayWeatherView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.navigationBar.isHidden = false
+
     }
     
     //  MARK: - Private Methods
@@ -85,10 +98,11 @@ final class WeatherViewController: UIViewController {
         view.addSubview(bottomBarView)
         
         bottomBarView.cityListButtonPressed = { [weak self] in
-            let citySelectionVC = CitySelectionViewController()
-            
-            citySelectionVC.modalPresentationStyle = .fullScreen
-            self?.present(citySelectionVC, animated: true)
+//            let citySelectionVC = CitySelectionViewController()
+//            
+//            citySelectionVC.modalPresentationStyle = .fullScreen
+//            self?.present(citySelectionVC, animated: true)
+            self?.navigationController?.popViewController(animated: true)
         }
         
         bottomBarView.snp.makeConstraints { make in

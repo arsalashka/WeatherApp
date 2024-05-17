@@ -9,14 +9,13 @@ import UIKit
 import SnapKit
 
 final class CitySelectionViewController: UIViewController {
-    
     //  MARK: - Constants
     private enum Constants: String {
         case title = "Current location"
         case subtitle = "Kansas City"
         case description = "Mostly Sunny"
         case urlString = "https://meteoinfo.ru/t-scale"
-        case titleLabelText = "Weather"
+//        case titleLabelText = "Weather"
         case searchFieldPlaceholder = "Search for a city or airport"
         case rightViewOfSearchField = "list.bullet"
         case unitSelectionButtonShowTitle = "Show UnitSelectionView"
@@ -31,7 +30,11 @@ final class CitySelectionViewController: UIViewController {
     }
     
     //  MARK: - Properties
-    private let titleLabel = UILabel()
+//    private let titleLabel = UILabel()
+    
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
     private let searchField = UISearchTextField()
     private let cityView = CityView()
     private let editUnitSelectionButton = UIButton()
@@ -44,66 +47,98 @@ final class CitySelectionViewController: UIViewController {
         
         view.backgroundColor = .black
         
-        setupTitleLabel()
-        setupSearchField()
+        showCityWeatherViewController()
+        
+        setupNavigationBar()
+        setupScrollView()
+        
+//        setupTitleLabel()
+//        setupSearchField()
         setupCityView()
-        setupEditUnitSelectionButton()
+//        setupEditUnitSelectionButton()
         setupShowWebViewButton()
         setupUnitSelectionView()
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if !unitSelectionView.isHidden {
-            editUnitSelectionButtonPressed()
-        }
-        searchField.endEditing(true)
-    }
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        if !unitSelectionView.isHidden {
+//            editUnitSelectionButtonPressed()
+//        }
+//        searchField.endEditing(true)
+//    }
     
     //  MARK: - Private Methods
-    private func setupTitleLabel() {
-        view.addSubview(titleLabel)
-        titleLabel.text = Constants.titleLabelText.rawValue
-        titleLabel.font = .systemFont(ofSize: 32, weight: .bold)
-        titleLabel.textColor = .white
+    private func showCityWeatherViewController() {
+        let cityWeatherViewController = CityWeatherViewController()
+        self.navigationController?.pushViewController(cityWeatherViewController, animated: true)
+    }
+    
+    private func setupNavigationBar() {
+        let navigationBar = navigationController?.navigationBar
         
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
-            make.horizontalEdges.equalToSuperview().inset(16)
+        title = "Weather"
+        navigationBar?.prefersLargeTitles = true
+        navigationBar?.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationBar?.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationBar?.barStyle = .black
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "ellipsis.circle")?.withTintColor(.white, renderingMode: .alwaysOriginal),
+            style: .plain,
+            target: self,
+            action: #selector(editUnitSelectionButtonPressed)
+        )
+        
+    }
+    
+    private func setupScrollView() {
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalTo(view)
+            
+//            TODO: edit height
+            make.height.equalTo(1500)
         }
     }
     
-    private func setupSearchField() {
-        view.addSubview(searchField)
-        
-        let tintColor = UIColor.white.withAlphaComponent(0.5)
-        searchField.attributedPlaceholder = NSAttributedString(
-            string: Constants.searchFieldPlaceholder.rawValue,
-            attributes: [.foregroundColor: tintColor]
-        )
-        searchField.backgroundColor = .white.withAlphaComponent(0.1)
-        searchField.tintColor = .white
-        searchField.leftView?.tintColor = tintColor
-        
-        let rightView = UIButton()
-        rightView.setImage(UIImage(systemName: Constants.rightViewOfSearchField.rawValue), for: .normal)
-        rightView.tintColor = tintColor
-        
-        rightView.addAction(UIAction {_ in
-            print(#function)
-        }, for: .touchUpInside)
-        
-        searchField.rightView = rightView
-        searchField.rightViewMode = .unlessEditing
-        
-        searchField.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(16)
-            make.horizontalEdges.equalToSuperview().inset(16)
-            make.height.equalTo(40)
-        }
-    }
+    
+//    private func setupSearchField() {
+//        view.addSubview(searchField)
+//        
+//        let tintColor = UIColor.white.withAlphaComponent(0.5)
+//        searchField.attributedPlaceholder = NSAttributedString(
+//            string: Constants.searchFieldPlaceholder.rawValue,
+//            attributes: [.foregroundColor: tintColor]
+//        )
+//        searchField.backgroundColor = .white.withAlphaComponent(0.1)
+//        searchField.tintColor = .white
+//        searchField.leftView?.tintColor = tintColor
+//        
+//        let rightView = UIButton()
+//        rightView.setImage(UIImage(systemName: Constants.rightViewOfSearchField.rawValue), for: .normal)
+//        rightView.tintColor = tintColor
+//        
+//        rightView.addAction(UIAction {_ in
+//            print(#function)
+//        }, for: .touchUpInside)
+//        
+//        searchField.rightView = rightView
+//        searchField.rightViewMode = .unlessEditing
+//        
+//        searchField.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(16)
+//            make.horizontalEdges.equalToSuperview().inset(16)
+//            make.height.equalTo(40)
+//        }
+//    }
     
     private func setupCityView() {
-        view.addSubview(cityView)
+        contentView.addSubview(cityView)
         cityView.setup(CityView.InputModel(
             title: Constants.title.rawValue,
             subtitle: Constants.subtitle.rawValue,
@@ -112,33 +147,36 @@ final class CitySelectionViewController: UIViewController {
             maxTemp: CityViewTempConstants.maxTemp.rawValue,
             currentTemp: CityViewTempConstants.currentTemp.rawValue))
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(cityViewTapped(_:)))
+        cityView.addGestureRecognizer(tap)
+        
         cityView.snp.makeConstraints { make in
-            make.top.equalTo(searchField.snp.bottom).offset(16)
+            make.top.equalToSuperview().offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
         }
     }
     
-    private func setupEditUnitSelectionButton() {
-        view.addSubview(editUnitSelectionButton)
-        editUnitSelectionButton.setTitle(Constants.unitSelectionButtonShowTitle.rawValue, for: .normal)
-        editUnitSelectionButton.backgroundColor = .white.withAlphaComponent(0.4)
-        editUnitSelectionButton.layer.cornerRadius = 8
-        
-        editUnitSelectionButton.addTarget(
-            self,
-            action: #selector(editUnitSelectionButtonPressed),
-            for: .touchUpInside
-        )
-        
-        editUnitSelectionButton.snp.makeConstraints { make in
-            make.top.equalTo(cityView.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(210)
-        }
-    }
+//    private func setupEditUnitSelectionButton() {
+//        contentView.addSubview(editUnitSelectionButton)
+//        editUnitSelectionButton.setTitle(Constants.unitSelectionButtonShowTitle.rawValue, for: .normal)
+//        editUnitSelectionButton.backgroundColor = .white.withAlphaComponent(0.4)
+//        editUnitSelectionButton.layer.cornerRadius = 8
+//        
+//        editUnitSelectionButton.addTarget(
+//            self,
+//            action: #selector(editUnitSelectionButtonPressed),
+//            for: .touchUpInside
+//        )
+//        
+//        editUnitSelectionButton.snp.makeConstraints { make in
+//            make.top.equalTo(cityView.snp.bottom).offset(16)
+//            make.centerX.equalToSuperview()
+//            make.width.equalTo(210)
+//        }
+//    }
     
     private func setupShowWebViewButton() {
-        view.addSubview(showWebViewButton)
+        contentView.addSubview(showWebViewButton)
         showWebViewButton.setTitle(Constants.showWebViewButtonTitle.rawValue, for: .normal)
         showWebViewButton.backgroundColor = .white.withAlphaComponent(0.4)
         showWebViewButton.layer.cornerRadius = 8
@@ -150,20 +188,21 @@ final class CitySelectionViewController: UIViewController {
         )
         
         showWebViewButton.snp.makeConstraints { make in
-            make.top.equalTo(editUnitSelectionButton.snp.bottom).offset(16)
+            make.top.equalTo(cityView.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.width.equalTo(210)
         }
     }
     
     private func setupUnitSelectionView() {
-        view.addSubview(unitSelectionView)
+        contentView.addSubview(unitSelectionView)
         unitSelectionView.isHidden = true
         
         unitSelectionView.snp.makeConstraints { make in
             make.top.equalTo(showWebViewButton.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.size.equalTo(150)
+//            make.bottom.equalTo(contentView.snp.bottom)
         }
     }
     
@@ -184,5 +223,9 @@ final class CitySelectionViewController: UIViewController {
         }
         
         present(webVC, animated: true)
+    }
+    
+    @IBAction func cityViewTapped(_ sender: UITapGestureRecognizer? = nil) {
+        showCityWeatherViewController()
     }
 }
