@@ -10,25 +10,59 @@ import WebKit
 import SnapKit
 
 final class WebViewController: UIViewController {
+    
+    private enum Constants: String {
+        case urlString = "https://meteoinfo.ru/t-scale"
+        case navigationBarTitle = "Info"
+        case rightBarButtonItemImage = "x.circle.fill"
+    }
+    
     private let webView = WKWebView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.hidesBackButton = true
+
+        setupNavigationBar()
         setupWebView()
-    }
-    
-    //  MARK: - Public Methods
-    func open(_ url: URL) {
-        webView.load(URLRequest(url: url))
+        loadURL()
     }
     
     //  MARK: - Private Methods
+    private func setupNavigationBar() {
+        title = Constants.navigationBarTitle.rawValue
+        navigationController?.navigationBar.backgroundColor = .black
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: Constants.rightBarButtonItemImage.rawValue)?
+                .applyingSymbolConfiguration(.init(hierarchicalColor: .white))?
+                .applyingSymbolConfiguration(.init(font: .systemFont(ofSize: 20))),
+            style: .plain,
+            target: self,
+            action: #selector(closeButtonPressed)
+        )
+    }
+    
     private func setupWebView() {
         view.addSubview(webView)
         
         webView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+    }
+    
+    private func loadURL() {
+        if let url = URL(string: Constants.urlString.rawValue) {
+            webView.load(URLRequest(url: url))
+        }
+    }
+    
+//    MARK: - @objc Methods
+    @IBAction private func closeButtonPressed() {
+        navigationItem.hidesBackButton = false
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.popViewController(animated: true)
     }
 }

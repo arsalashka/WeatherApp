@@ -9,18 +9,15 @@ import UIKit
 import SnapKit
 
 final class CitySelectionViewController: UIViewController {
+    
     //  MARK: - Constants
     private enum Constants: String {
         case title = "Current location"
         case subtitle = "Kansas City"
         case description = "Mostly Sunny"
-        case urlString = "https://meteoinfo.ru/t-scale"
-//        case titleLabelText = "Weather"
         case searchBarPlaceholder = "Search for a city or airport"
-        case rightViewOfSearchField = "list.bullet"
-        case unitSelectionButtonShowTitle = "Show UnitSelectionView"
-        case unitSelectionButtonHideTitle = "Hide UnitSelectionView"
         case showWebViewButtonTitle = "Show Info"
+        case navigationBarTitleText = "Weather"
     }
     
     private enum CityViewTempConstants: Int {
@@ -30,12 +27,8 @@ final class CitySelectionViewController: UIViewController {
     }
     
     //  MARK: - Properties
-//    private let titleLabel = UILabel()
-    
     private let scrollView = UIScrollView()
     private let contentView = UIView()
-    
-    private let searchField = UISearchTextField()
     private let cityView = CityView()
     private let editUnitSelectionButton = UIButton()
     private let unitSelectionView = UnitSelectionView()
@@ -48,26 +41,14 @@ final class CitySelectionViewController: UIViewController {
         view.backgroundColor = .black
         
         showCityWeatherViewController()
-//        print(#function)
         
         setupNavigationBar()
         setupSearchController()
         setupScrollView()
-        
-//        setupTitleLabel()
-//        setupSearchField()
         setupCityView()
-//        setupEditUnitSelectionButton()
         setupShowWebViewButton()
         setupUnitSelectionView()
     }
-    
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        if !unitSelectionView.isHidden {
-//            editUnitSelectionButtonPressed()
-//        }
-//        searchField.endEditing(true)
-//    }
     
     //  MARK: - Private Methods
     private func showCityWeatherViewController() {
@@ -78,7 +59,7 @@ final class CitySelectionViewController: UIViewController {
     private func setupNavigationBar() {
         let navigationBar = navigationController?.navigationBar
         
-        title = "Weather"
+        title = Constants.navigationBarTitleText.rawValue
         navigationBar?.prefersLargeTitles = true
         navigationBar?.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         navigationBar?.titleTextAttributes = [.foregroundColor: UIColor.white]
@@ -87,7 +68,7 @@ final class CitySelectionViewController: UIViewController {
             image: UIImage(systemName: "ellipsis.circle")?.withTintColor(.white, renderingMode: .alwaysOriginal),
             style: .plain,
             target: self,
-            action: #selector(editUnitSelectionButtonPressed)
+            action: #selector(rightBarButtonItemPressed)
         )
     }
     
@@ -116,42 +97,9 @@ final class CitySelectionViewController: UIViewController {
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalTo(view)
-            
-//            TODO: edit height
             make.height.equalTo(1500)
         }
     }
-    
-    
-//    private func setupSearchField() {
-//        view.addSubview(searchField)
-//        
-//        let tintColor = UIColor.white.withAlphaComponent(0.5)
-//        searchField.attributedPlaceholder = NSAttributedString(
-//            string: Constants.searchFieldPlaceholder.rawValue,
-//            attributes: [.foregroundColor: tintColor]
-//        )
-//        searchField.backgroundColor = .white.withAlphaComponent(0.1)
-//        searchField.tintColor = .white
-//        searchField.leftView?.tintColor = tintColor
-//        
-//        let rightView = UIButton()
-//        rightView.setImage(UIImage(systemName: Constants.rightViewOfSearchField.rawValue), for: .normal)
-//        rightView.tintColor = tintColor
-//        
-//        rightView.addAction(UIAction {_ in
-//            print(#function)
-//        }, for: .touchUpInside)
-//        
-//        searchField.rightView = rightView
-//        searchField.rightViewMode = .unlessEditing
-//        
-//        searchField.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(16)
-//            make.horizontalEdges.equalToSuperview().inset(16)
-//            make.height.equalTo(40)
-//        }
-//    }
     
     private func setupCityView() {
         contentView.addSubview(cityView)
@@ -171,25 +119,6 @@ final class CitySelectionViewController: UIViewController {
             make.horizontalEdges.equalToSuperview().inset(16)
         }
     }
-    
-//    private func setupEditUnitSelectionButton() {
-//        contentView.addSubview(editUnitSelectionButton)
-//        editUnitSelectionButton.setTitle(Constants.unitSelectionButtonShowTitle.rawValue, for: .normal)
-//        editUnitSelectionButton.backgroundColor = .white.withAlphaComponent(0.4)
-//        editUnitSelectionButton.layer.cornerRadius = 8
-//        
-//        editUnitSelectionButton.addTarget(
-//            self,
-//            action: #selector(editUnitSelectionButtonPressed),
-//            for: .touchUpInside
-//        )
-//        
-//        editUnitSelectionButton.snp.makeConstraints { make in
-//            make.top.equalTo(cityView.snp.bottom).offset(16)
-//            make.centerX.equalToSuperview()
-//            make.width.equalTo(210)
-//        }
-//    }
     
     private func setupShowWebViewButton() {
         contentView.addSubview(showWebViewButton)
@@ -218,27 +147,18 @@ final class CitySelectionViewController: UIViewController {
             make.top.equalTo(showWebViewButton.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.size.equalTo(150)
-//            make.bottom.equalTo(contentView.snp.bottom)
         }
     }
     
     //  MARK: - Button Pressed Methods
-    @IBAction func editUnitSelectionButtonPressed() {
+    @IBAction func rightBarButtonItemPressed() {
         unitSelectionView.isHidden  = unitSelectionView.isHidden ? false : true
-        editUnitSelectionButton.setTitle(
-            unitSelectionView.isHidden ? Constants.unitSelectionButtonShowTitle.rawValue : Constants.unitSelectionButtonHideTitle.rawValue,
-            for: .normal
-        )
     }
     
     @IBAction func showWebViewButtonPressed() {
-        let webVC = WebViewController()
+        let webViewController = WebViewController()
         
-        if let url = URL(string: Constants.urlString.rawValue) {
-            webVC.open(url)
-        }
-        
-        present(webVC, animated: true)
+        navigationController?.pushViewController(webViewController, animated: true)
     }
     
     @IBAction func cityViewTapped(_ sender: UITapGestureRecognizer? = nil) {

@@ -11,6 +11,14 @@ import SnapKit
 final class CityWeatherViewController: UIViewController {
     
     //  MARK: - Constants
+    private enum Constants: String {
+        case showDetailsButtonTitle = "Show Details"
+        case titleViewTitle = "Current location"
+        case titleViewSubtitle = "Kansas City"
+        case titleViewDescription = "Mostly Sunny"
+        case dayWeatherViewTitle = "Now"
+    }
+    
     private enum TitleViewConstants: Int {
         case currentTemp = 28
         case minTemp = 15
@@ -49,16 +57,16 @@ final class CityWeatherViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-           super.viewWillAppear(animated)
-           
-           navigationController?.navigationBar.isHidden = true
-       }
-       
-       override func viewWillDisappear(_ animated: Bool) {
-           super.viewWillDisappear(animated)
-           
-           navigationController?.navigationBar.isHidden = false
-       }
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.navigationBar.isHidden = false
+    }
     
     //  MARK: - Private Methods
     private func setupImageView() {
@@ -84,10 +92,10 @@ final class CityWeatherViewController: UIViewController {
     
     private func setupTitleView() {
         titleContainer.addSubview(titleView)
-        titleView.setup(TitleView.TitleViewModel(title: "Current location",
-                                                 subtitle: "Kansas City",
+        titleView.setup(TitleView.TitleViewModel(title: Constants.titleViewTitle.rawValue,
+                                                 subtitle: Constants.titleViewSubtitle.rawValue,
                                                  currentTemp: TitleViewConstants.currentTemp.rawValue,
-                                                 description: "Mostly Sunny",
+                                                 description: Constants.titleViewDescription.rawValue,
                                                  minTemp: TitleViewConstants.minTemp.rawValue,
                                                  maxTemp: TitleViewConstants.maxTemp.rawValue))
         titleView.snp.makeConstraints { make in
@@ -124,7 +132,7 @@ final class CityWeatherViewController: UIViewController {
     private func setupDailyWeatherView() {
         temporaryContentView.addSubview(dayWeatherView)
         dayWeatherView.setup(
-            DayWeatherView.DataModel(title: "Now",
+            DayWeatherView.DataModel(title: Constants.dayWeatherViewTitle.rawValue,
                                      image: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
                                      minTemp: Double(DayWeatherViewConstants.minTemp.rawValue),
                                      maxTemp: Double(DayWeatherViewConstants.maxTemp.rawValue),
@@ -164,11 +172,10 @@ final class CityWeatherViewController: UIViewController {
         }
     }
     
-//    TODO: bring values to constants
     private func setupShowDetailsButton() {
         temporaryContentView.addSubview(showDetailsButton)
         
-        showDetailsButton.setTitle("Show Details", for: .normal)
+        showDetailsButton.setTitle(Constants.showDetailsButtonTitle.rawValue, for: .normal)
         showDetailsButton.titleLabel?.textColor = .white
         showDetailsButton.backgroundColor = .darkBlue
         showDetailsButton.layer.cornerRadius = 8

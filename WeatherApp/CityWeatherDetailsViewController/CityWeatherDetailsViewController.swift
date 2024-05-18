@@ -9,9 +9,11 @@ import UIKit
 import SnapKit
 
 final class CityWeatherDetailsViewController: UIViewController {
+    
     private enum Constants: String {
         case icon = "cloud.sun"
         case labelText = "Conditions"
+        case rightBarButtonItemImage = "x.circle.fill"
     }
     
     let stackView = UIStackView()
@@ -41,10 +43,9 @@ final class CityWeatherDetailsViewController: UIViewController {
         navigationItem.titleView = stackView
     }
     
-//    TODO: Constants
     private func setupNavigationBarDismissButton() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "x.circle.fill")?
+            image: UIImage(systemName: Constants.rightBarButtonItemImage.rawValue)?
                 .applyingSymbolConfiguration(.init(hierarchicalColor: .white))?
                 .applyingSymbolConfiguration(.init(font: .systemFont(ofSize: 20))),
             style: .plain,
