@@ -33,6 +33,7 @@ final class CityWeatherViewController: UIViewController {
     private let temporaryContentView = UIView()
     private let dayWeatherView = DayWeatherView()
     private let hourlyWeatherView = HourlyWeatherView()
+    private let showDetailsButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,20 +45,20 @@ final class CityWeatherViewController: UIViewController {
         setupTemporaryContentView()
         setupDailyWeatherView()
         setupDayWeatherView()
+        setupShowDetailsButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        navigationController?.navigationBar.isHidden = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        navigationController?.navigationBar.isHidden = false
-
-    }
+           super.viewWillAppear(animated)
+           
+           navigationController?.navigationBar.isHidden = true
+       }
+       
+       override func viewWillDisappear(_ animated: Bool) {
+           super.viewWillDisappear(animated)
+           
+           navigationController?.navigationBar.isHidden = false
+       }
     
     //  MARK: - Private Methods
     private func setupImageView() {
@@ -98,10 +99,6 @@ final class CityWeatherViewController: UIViewController {
         view.addSubview(bottomBarView)
         
         bottomBarView.cityListButtonPressed = { [weak self] in
-//            let citySelectionVC = CitySelectionViewController()
-//            
-//            citySelectionVC.modalPresentationStyle = .fullScreen
-//            self?.present(citySelectionVC, animated: true)
             self?.navigationController?.popViewController(animated: true)
         }
         
@@ -164,7 +161,33 @@ final class CityWeatherViewController: UIViewController {
             make.top.equalTo(dayWeatherView.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(100)
+        }
+    }
+    
+//    TODO: bring values to constants
+    private func setupShowDetailsButton() {
+        temporaryContentView.addSubview(showDetailsButton)
+        
+        showDetailsButton.setTitle("Show Details", for: .normal)
+        showDetailsButton.titleLabel?.textColor = .white
+        showDetailsButton.backgroundColor = .darkBlue
+        showDetailsButton.layer.cornerRadius = 8
+        
+        showDetailsButton.addTarget(self, action: #selector(showDetailsButtonPressed), for: .touchUpInside)
+        
+        showDetailsButton.snp.makeConstraints { make in
+            make.top.equalTo(hourlyWeatherView.snp.bottom).offset(16)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(120)
             make.bottom.equalToSuperview().inset(16)
         }
+    }
+    
+    //  MARK: - @objc Methods
+    @IBAction func showDetailsButtonPressed() {
+        let cityWeatherDetailsViewController = CityWeatherDetailsViewController()
+        let navigationController = UINavigationController(rootViewController: cityWeatherDetailsViewController)
+        
+        self.present(navigationController, animated: true)
     }
 }
