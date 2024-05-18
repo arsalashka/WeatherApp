@@ -16,7 +16,7 @@ final class CitySelectionViewController: UIViewController {
         case description = "Mostly Sunny"
         case urlString = "https://meteoinfo.ru/t-scale"
 //        case titleLabelText = "Weather"
-        case searchFieldPlaceholder = "Search for a city or airport"
+        case searchBarPlaceholder = "Search for a city or airport"
         case rightViewOfSearchField = "list.bullet"
         case unitSelectionButtonShowTitle = "Show UnitSelectionView"
         case unitSelectionButtonHideTitle = "Hide UnitSelectionView"
@@ -48,8 +48,10 @@ final class CitySelectionViewController: UIViewController {
         view.backgroundColor = .black
         
         showCityWeatherViewController()
+//        print(#function)
         
         setupNavigationBar()
+        setupSearchController()
         setupScrollView()
         
 //        setupTitleLabel()
@@ -87,7 +89,21 @@ final class CitySelectionViewController: UIViewController {
             target: self,
             action: #selector(editUnitSelectionButtonPressed)
         )
+    }
+    
+    private func setupSearchController() {
+        let searchResultController = SearchResultViewController()
+        let searchController = UISearchController(searchResultsController: searchResultController)
         
+        searchController.searchResultsUpdater = searchResultController
+        searchController.showsSearchResultsController = true
+        
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
+        searchController.searchBar.placeholder = Constants.searchBarPlaceholder.rawValue
+        searchController.searchBar.delegate = self
+        searchController.searchBar.setImage(UIImage(systemName: "mic.fill"), for: .bookmark, state: .normal)
+        searchController.searchBar.showsBookmarkButton = true
     }
     
     private func setupScrollView() {
@@ -227,5 +243,16 @@ final class CitySelectionViewController: UIViewController {
     
     @IBAction func cityViewTapped(_ sender: UITapGestureRecognizer? = nil) {
         showCityWeatherViewController()
+    }
+}
+
+//  MARK: - Extensions
+extension CitySelectionViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        print(searchText)
+    }
+    
+    func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+        print(#function)
     }
 }
