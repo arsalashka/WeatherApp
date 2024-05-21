@@ -16,9 +16,9 @@ final class CityWeatherDetailsViewController: UIViewController {
         case rightBarButtonItemImage = "x.circle.fill"
     }
     
-    let stackView = UIStackView()
-    let imageView = UIImageView()
-    let label = UILabel()
+    private let stackView = UIStackView()
+    private let imageView = UIImageView()
+    private let label = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()

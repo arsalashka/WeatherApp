@@ -33,6 +33,8 @@ final class CitySelectionViewController: UIViewController {
     private let editUnitSelectionButton = UIButton()
     private let unitSelectionView = UnitSelectionView()
     private let showWebViewButton = UIButton()
+    private let searchResultController = SearchResultViewController()
+
     
     //  MARK: - Override Methods
     override func viewDidLoad() {
@@ -53,7 +55,7 @@ final class CitySelectionViewController: UIViewController {
     //  MARK: - Private Methods
     private func showCityWeatherViewController() {
         let cityWeatherViewController = CityWeatherViewController()
-        self.navigationController?.pushViewController(cityWeatherViewController, animated: true)
+        navigationController?.pushViewController(cityWeatherViewController, animated: true)
     }
     
     private func setupNavigationBar() {
@@ -73,7 +75,6 @@ final class CitySelectionViewController: UIViewController {
     }
     
     private func setupSearchController() {
-        let searchResultController = SearchResultViewController()
         let searchController = UISearchController(searchResultsController: searchResultController)
         
         searchController.searchResultsUpdater = searchResultController

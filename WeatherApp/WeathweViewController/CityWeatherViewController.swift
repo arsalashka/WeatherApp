@@ -66,6 +66,7 @@ final class CityWeatherViewController: UIViewController {
         super.viewWillDisappear(animated)
         
         navigationController?.navigationBar.isHidden = false
+        backgroundImage.image = nil
     }
     
     //  MARK: - Private Methods
@@ -73,7 +74,6 @@ final class CityWeatherViewController: UIViewController {
         view.addSubview(backgroundImage)
         backgroundImage.contentMode = .scaleAspectFill
         backgroundImage.image = .sky
-        backgroundImage.alpha = 0.8
         
         backgroundImage.snp.makeConstraints { make in
             make.edges.equalToSuperview()
