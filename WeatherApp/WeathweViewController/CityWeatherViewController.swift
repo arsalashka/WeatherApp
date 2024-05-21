@@ -8,9 +8,17 @@
 import UIKit
 import SnapKit
 
-final class WeatherViewController: UIViewController {
+final class CityWeatherViewController: UIViewController {
     
     //  MARK: - Constants
+    private enum Constants: String {
+        case showDetailsButtonTitle = "Show Details"
+        case titleViewTitle = "Current location"
+        case titleViewSubtitle = "Kansas City"
+        case titleViewDescription = "Mostly Sunny"
+        case dayWeatherViewTitle = "Now"
+    }
+    
     private enum TitleViewConstants: Int {
         case currentTemp = 28
         case minTemp = 15
@@ -33,10 +41,11 @@ final class WeatherViewController: UIViewController {
     private let temporaryContentView = UIView()
     private let dayWeatherView = DayWeatherView()
     private let hourlyWeatherView = HourlyWeatherView()
+    private let showDetailsButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         setupImageView()
         setupTitleContainer()
         setupTitleView()
@@ -44,6 +53,20 @@ final class WeatherViewController: UIViewController {
         setupTemporaryContentView()
         setupDailyWeatherView()
         setupDayWeatherView()
+        setupShowDetailsButton()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.navigationBar.isHidden = false
+        backgroundImage.image = nil
     }
     
     //  MARK: - Private Methods
@@ -51,7 +74,6 @@ final class WeatherViewController: UIViewController {
         view.addSubview(backgroundImage)
         backgroundImage.contentMode = .scaleAspectFill
         backgroundImage.image = .sky
-        backgroundImage.alpha = 0.8
         
         backgroundImage.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -70,10 +92,10 @@ final class WeatherViewController: UIViewController {
     
     private func setupTitleView() {
         titleContainer.addSubview(titleView)
-        titleView.setup(TitleView.TitleViewModel(title: "Current location",
-                                                 subtitle: "Kansas City",
+        titleView.setup(TitleView.TitleViewModel(title: Constants.titleViewTitle.rawValue,
+                                                 subtitle: Constants.titleViewSubtitle.rawValue,
                                                  currentTemp: TitleViewConstants.currentTemp.rawValue,
-                                                 description: "Mostly Sunny",
+                                                 description: Constants.titleViewDescription.rawValue,
                                                  minTemp: TitleViewConstants.minTemp.rawValue,
                                                  maxTemp: TitleViewConstants.maxTemp.rawValue))
         titleView.snp.makeConstraints { make in
@@ -85,10 +107,7 @@ final class WeatherViewController: UIViewController {
         view.addSubview(bottomBarView)
         
         bottomBarView.cityListButtonPressed = { [weak self] in
-            let citySelectionVC = CitySelectionViewController()
-            
-            citySelectionVC.modalPresentationStyle = .fullScreen
-            self?.present(citySelectionVC, animated: true)
+            self?.navigationController?.popViewController(animated: true)
         }
         
         bottomBarView.snp.makeConstraints { make in
@@ -113,7 +132,7 @@ final class WeatherViewController: UIViewController {
     private func setupDailyWeatherView() {
         temporaryContentView.addSubview(dayWeatherView)
         dayWeatherView.setup(
-            DayWeatherView.DataModel(title: "Now",
+            DayWeatherView.DataModel(title: Constants.dayWeatherViewTitle.rawValue,
                                      image: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
                                      minTemp: Double(DayWeatherViewConstants.minTemp.rawValue),
                                      maxTemp: Double(DayWeatherViewConstants.maxTemp.rawValue),
@@ -150,7 +169,32 @@ final class WeatherViewController: UIViewController {
             make.top.equalTo(dayWeatherView.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalTo(100)
+        }
+    }
+    
+    private func setupShowDetailsButton() {
+        temporaryContentView.addSubview(showDetailsButton)
+        
+        showDetailsButton.setTitle(Constants.showDetailsButtonTitle.rawValue, for: .normal)
+        showDetailsButton.titleLabel?.textColor = .white
+        showDetailsButton.backgroundColor = .darkBlue
+        showDetailsButton.layer.cornerRadius = 8
+        
+        showDetailsButton.addTarget(self, action: #selector(showDetailsButtonPressed), for: .touchUpInside)
+        
+        showDetailsButton.snp.makeConstraints { make in
+            make.top.equalTo(hourlyWeatherView.snp.bottom).offset(16)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(120)
             make.bottom.equalToSuperview().inset(16)
         }
+    }
+    
+    //  MARK: - @objc Methods
+    @IBAction func showDetailsButtonPressed() {
+        let cityWeatherDetailsViewController = CityWeatherDetailsViewController()
+        let navigationController = UINavigationController(rootViewController: cityWeatherDetailsViewController)
+        
+        self.present(navigationController, animated: true)
     }
 }
