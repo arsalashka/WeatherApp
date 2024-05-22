@@ -132,13 +132,15 @@ final class CityWeatherViewController: UIViewController {
     private func setupDailyWeatherView() {
         temporaryContentView.addSubview(dayWeatherView)
         dayWeatherView.setup(
-            DayWeatherView.DataModel(title: Constants.dayWeatherViewTitle.rawValue,
-                                     image: UIImage(systemName: "sun.max.fill")?.withRenderingMode(.alwaysOriginal),
-                                     minTemp: Double(DayWeatherViewConstants.minTemp.rawValue),
-                                     maxTemp: Double(DayWeatherViewConstants.maxTemp.rawValue),
-                                     minDayTemp: Double(DayWeatherViewConstants.minDayTemp.rawValue),
-                                     maxDayTemp: Double(DayWeatherViewConstants.maxDayTemp.rawValue),
-                                     currentTemp: Double(DayWeatherViewConstants.currentTemp.rawValue))
+            DayWeatherView.DataModel(
+                title: Constants.dayWeatherViewTitle.rawValue,
+                image: UIImage(systemSymbol: .sunMaxFill)?.withRenderingMode(.alwaysOriginal),
+                minTemp: Double(DayWeatherViewConstants.minTemp.rawValue),
+                maxTemp: Double(DayWeatherViewConstants.maxTemp.rawValue),
+                minDayTemp: Double(DayWeatherViewConstants.minDayTemp.rawValue),
+                maxDayTemp: Double(DayWeatherViewConstants.maxDayTemp.rawValue),
+                currentTemp: Double(DayWeatherViewConstants.currentTemp.rawValue)
+            )
         )
         
         dayWeatherView.snp.makeConstraints { make in

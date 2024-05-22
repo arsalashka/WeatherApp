@@ -67,7 +67,7 @@ final class CitySelectionViewController: UIViewController {
         navigationBar?.titleTextAttributes = [.foregroundColor: UIColor.white]
         navigationBar?.barStyle = .black
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "ellipsis.circle")?.withTintColor(.white, renderingMode: .alwaysOriginal),
+            image: UIImage(systemSymbol: .ellipsisCircle)?.withTintColor(.white, renderingMode: .alwaysOriginal),
             style: .plain,
             target: self,
             action: #selector(rightBarButtonItemPressed)
@@ -84,7 +84,7 @@ final class CitySelectionViewController: UIViewController {
         navigationItem.searchController = searchController
         searchController.searchBar.placeholder = Constants.searchBarPlaceholder.rawValue
         searchController.searchBar.delegate = self
-        searchController.searchBar.setImage(UIImage(systemName: "mic.fill"), for: .bookmark, state: .normal)
+        searchController.searchBar.setImage(UIImage(systemSymbol: .micFill), for: .bookmark, state: .normal)
         searchController.searchBar.showsBookmarkButton = true
     }
     
