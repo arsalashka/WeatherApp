@@ -29,8 +29,8 @@ final class CitySelectionViewController: UIViewController {
     //  MARK: - Properties
     private let scrollView = UIScrollView()
     private let contentView = UIView()
+    private let tempStackView = UIStackView()
     private let cityView = CityView()
-    private let editUnitSelectionButton = UIButton()
     private let unitSelectionView = UnitSelectionView()
     private let showWebViewButton = UIButton()
     private let searchResultController = SearchResultViewController()
@@ -42,20 +42,29 @@ final class CitySelectionViewController: UIViewController {
         
         view.backgroundColor = .black
         
-        showCityWeatherViewController()
+        presentCityWeatherViewController(with: MOCKData.data.first, animated: false)
         
         setupNavigationBar()
         setupSearchController()
         setupScrollView()
-        setupCityView()
+        setupStackView()
+        
         setupShowWebViewButton()
         setupUnitSelectionView()
     }
     
     //  MARK: - Private Methods
-    private func showCityWeatherViewController() {
+    private func presentCityWeatherViewController(with data: MOCKData?, animated: Bool = true) {
         let cityWeatherViewController = CityWeatherViewController()
-        navigationController?.pushViewController(cityWeatherViewController, animated: true)
+        
+        cityWeatherViewController.modalPresentationStyle = .fullScreen
+        
+        if let data {
+            cityWeatherViewController.setup(data)
+        }
+        present(cityWeatherViewController, animated: true)
+//        navigationController?.pushViewController(cityWeatherViewController, animated: true)
+        
     }
     
     private func setupNavigationBar() {
@@ -102,24 +111,51 @@ final class CitySelectionViewController: UIViewController {
         }
     }
     
-    private func setupCityView() {
-        contentView.addSubview(cityView)
-        cityView.setup(CityView.InputModel(
-            title: Constants.title.rawValue,
-            subtitle: Constants.subtitle.rawValue,
-            description: Constants.description.rawValue,
-            minTemp: CityViewTempConstants.minTemp.rawValue,
-            maxTemp: CityViewTempConstants.maxTemp.rawValue,
-            currentTemp: CityViewTempConstants.currentTemp.rawValue))
+    private func setupStackView() {
+        contentView.addSubview(tempStackView)
+        tempStackView.axis = .vertical
+        tempStackView.spacing = 12
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(cityViewTapped(_:)))
-        cityView.addGestureRecognizer(tap)
+        MOCKData.data.forEach { data in
+            let cityView = CityView()
+            
+            cityView.setup(CityView.InputModel(title: data.titleData.title,
+                                               subtitle: data.titleData.subtitle,
+                                               description: data.titleData.description,
+                                               minTemp: data.titleData.minTemp,
+                                               maxTemp: data.titleData.maxTemp,
+                                               currentTemp: data.titleData.currentTemp))
+            
+            cityView.tapAction = { [weak self] in self?.presentCityWeatherViewController(with: data) }
+            tempStackView.addArrangedSubview(cityView)
+        }
         
-        cityView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
-            make.horizontalEdges.equalToSuperview().inset(16)
+        tempStackView.snp.makeConstraints { make in
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
     }
+    
+    
+    
+    
+//    private func setupCityView() {
+//        contentView.addSubview(cityView)
+//        cityView.setup(CityView.InputModel(
+//            title: Constants.title.rawValue,
+//            subtitle: Constants.subtitle.rawValue,
+//            description: Constants.description.rawValue,
+//            minTemp: CityViewTempConstants.minTemp.rawValue,
+//            maxTemp: CityViewTempConstants.maxTemp.rawValue,
+//            currentTemp: CityViewTempConstants.currentTemp.rawValue))
+//        
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(cityViewTapped(_:)))
+//        cityView.addGestureRecognizer(tap)
+//        
+//        cityView.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(16)
+//            make.horizontalEdges.equalToSuperview().inset(16)
+//        }
+//    }
     
     private func setupShowWebViewButton() {
         contentView.addSubview(showWebViewButton)
@@ -134,7 +170,7 @@ final class CitySelectionViewController: UIViewController {
         )
         
         showWebViewButton.snp.makeConstraints { make in
-            make.top.equalTo(cityView.snp.bottom).offset(16)
+            make.top.equalTo(tempStackView.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.width.equalTo(210)
         }
@@ -152,18 +188,14 @@ final class CitySelectionViewController: UIViewController {
     }
     
     //  MARK: - Button Pressed Methods
-    @IBAction func rightBarButtonItemPressed() {
+    @IBAction private func rightBarButtonItemPressed() {
         unitSelectionView.isHidden  = unitSelectionView.isHidden ? false : true
     }
     
-    @IBAction func showWebViewButtonPressed() {
+    @IBAction private func showWebViewButtonPressed() {
         let webViewController = WebViewController()
         
         navigationController?.pushViewController(webViewController, animated: true)
-    }
-    
-    @IBAction func cityViewTapped(_ sender: UITapGestureRecognizer? = nil) {
-        showCityWeatherViewController()
     }
 }
 

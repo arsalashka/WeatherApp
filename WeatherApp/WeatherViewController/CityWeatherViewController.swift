@@ -13,16 +13,7 @@ final class CityWeatherViewController: UIViewController {
     //  MARK: - Constants
     private enum Constants: String {
         case showDetailsButtonTitle = "Show Details"
-        case titleViewTitle = "Current location"
-        case titleViewSubtitle = "Kansas City"
-        case titleViewDescription = "Mostly Sunny"
         case dayWeatherViewTitle = "Now"
-    }
-    
-    private enum TitleViewConstants: Int {
-        case currentTemp = 28
-        case minTemp = 15
-        case maxTemp = 32
     }
     
     private enum DayWeatherViewConstants: Int {
@@ -56,18 +47,11 @@ final class CityWeatherViewController: UIViewController {
         setupShowDetailsButton()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        navigationController?.navigationBar.isHidden = true
+    //  MARK: - Public Methods
+    func setup(_ data: MOCKData) {
+        titleView.setup(data.titleData)
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        navigationController?.navigationBar.isHidden = false
-        backgroundImage.image = nil
-    }
+
     
     //  MARK: - Private Methods
     private func setupImageView() {
@@ -92,12 +76,7 @@ final class CityWeatherViewController: UIViewController {
     
     private func setupTitleView() {
         titleContainer.addSubview(titleView)
-        titleView.setup(TitleView.TitleViewModel(title: Constants.titleViewTitle.rawValue,
-                                                 subtitle: Constants.titleViewSubtitle.rawValue,
-                                                 currentTemp: TitleViewConstants.currentTemp.rawValue,
-                                                 description: Constants.titleViewDescription.rawValue,
-                                                 minTemp: TitleViewConstants.minTemp.rawValue,
-                                                 maxTemp: TitleViewConstants.maxTemp.rawValue))
+       
         titleView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -107,7 +86,7 @@ final class CityWeatherViewController: UIViewController {
         view.addSubview(bottomBarView)
         
         bottomBarView.cityListButtonPressed = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
+            self?.dismiss(animated: true)
         }
         
         bottomBarView.snp.makeConstraints { make in
@@ -193,9 +172,17 @@ final class CityWeatherViewController: UIViewController {
     }
     
     //  MARK: - @objc Methods
-    @IBAction func showDetailsButtonPressed() {
+    @IBAction private func showDetailsButtonPressed() {
         let cityWeatherDetailsViewController = CityWeatherDetailsViewController()
         let navigationController = UINavigationController(rootViewController: cityWeatherDetailsViewController)
+        
+        navigationController.modalPresentationStyle = .pageSheet
+        
+        let sheetViewController = navigationController.sheetPresentationController
+        sheetViewController?.detents = [.medium(), .large()]
+        sheetViewController?.prefersGrabberVisible = true
+        sheetViewController?.largestUndimmedDetentIdentifier = .large
+        sheetViewController?.selectedDetentIdentifier = .large
         
         self.present(navigationController, animated: true)
     }

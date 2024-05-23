@@ -56,7 +56,7 @@ final class CityWeatherDetailsViewController: UIViewController {
     }
     
 //    MARK: - @objc Methods
-    @IBAction func closeButtonPressed() {
+    @IBAction private func closeButtonPressed() {
         dismiss(animated: true)
         print(#file, #function, #line)
     }
