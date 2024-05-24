@@ -11,9 +11,7 @@ import SnapKit
 final class CityWeatherDetailsViewController: UIViewController {
     
     private enum Constants: String {
-        case icon = "cloud.sun"
         case labelText = "Conditions"
-        case rightBarButtonItemImage = "x.circle.fill"
     }
     
     private let stackView = UIStackView()
@@ -31,7 +29,10 @@ final class CityWeatherDetailsViewController: UIViewController {
     
 //    MARK: - Private Methods
     private func setupNavigationBarTitleView() {
-        imageView.image = UIImage(systemName: Constants.icon.rawValue)?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        imageView.image = UIImage(
+            systemSymbol: .cloudSun)?
+            .withTintColor(.white, renderingMode: .alwaysOriginal
+            )
         label.text = Constants.labelText.rawValue
         label.textColor = .white
         
@@ -45,7 +46,7 @@ final class CityWeatherDetailsViewController: UIViewController {
     
     private func setupNavigationBarDismissButton() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: Constants.rightBarButtonItemImage.rawValue)?
+            image: UIImage(systemSymbol: .xCircleFill)?
                 .applyingSymbolConfiguration(.init(hierarchicalColor: .white))?
                 .applyingSymbolConfiguration(.init(font: .systemFont(ofSize: 20))),
             style: .plain,
@@ -55,7 +56,8 @@ final class CityWeatherDetailsViewController: UIViewController {
     }
     
 //    MARK: - @objc Methods
-    @IBAction func closeButtonPressed() {
+    @IBAction private func closeButtonPressed() {
         dismiss(animated: true)
+        print(#file, #function, #line)
     }
 }

@@ -29,6 +29,8 @@ final class CityView: UIView {
     let descriptionLabel = UILabel()
     let tempLimitsLabel = UILabel()
     
+    var tapAction: (() -> Void)? //TODO: Remove after implement collection
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -42,10 +44,16 @@ final class CityView: UIView {
         setupTitleLabel()
         setupSubtitleLabel()
         setupDescriptionLabel()
+        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapGestureAction))) //TODO: Remove after implement collection
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @IBAction private func tapGestureAction() { //TODO: Remove after implement collection
+        tapAction?()
     }
     
     //  MARK: - Public Methods

@@ -14,7 +14,6 @@ final class WebViewController: UIViewController {
     private enum Constants: String {
         case urlString = "https://meteoinfo.ru/t-scale"
         case navigationBarTitle = "Info"
-        case rightBarButtonItemImage = "x.circle.fill"
     }
     
     private let webView = WKWebView()
@@ -36,7 +35,7 @@ final class WebViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: Constants.rightBarButtonItemImage.rawValue)?
+            image: UIImage(systemSymbol: .xCircleFill)?
                 .applyingSymbolConfiguration(.init(hierarchicalColor: .white))?
                 .applyingSymbolConfiguration(.init(font: .systemFont(ofSize: 20))),
             style: .plain,

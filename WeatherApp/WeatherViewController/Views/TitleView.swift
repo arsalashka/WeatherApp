@@ -11,7 +11,7 @@ import SnapKit
 final class TitleView: UIView {
     
     //  MARK: - Data Model
-    struct TitleViewModel {
+    struct InputModel {
         let title: String
         let subtitle: String?
         let currentTemp: Int
@@ -45,13 +45,13 @@ final class TitleView: UIView {
     }
     
     //  MARK: - Public Methods
-    func setup(_ dataModel: TitleViewModel) {
-        titleLabel.text = dataModel.title
-        subTitleLabel.text = dataModel.subtitle
-        subTitleLabel.isHidden = dataModel.subtitle == nil
-        tempLabel.text = "\(dataModel.currentTemp)º"
-        descriptionLabel.text = dataModel.description
-        tempLimitsLabel.text = "Max: \(dataModel.maxTemp)º, min: \(dataModel.minTemp)º"
+    func setup(_ data: InputModel) {
+        titleLabel.text = data.title
+        subTitleLabel.text = data.subtitle
+        subTitleLabel.isHidden = data.subtitle == nil
+        tempLabel.text = "\(data.currentTemp)º"
+        descriptionLabel.text = data.description
+        tempLimitsLabel.text = "Max: \(data.maxTemp)º, min: \(data.minTemp)º"
     }
     
     //  MARK: - Private Methods for setup UI elements
