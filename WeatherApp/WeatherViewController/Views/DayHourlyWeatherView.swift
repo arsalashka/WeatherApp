@@ -8,19 +8,21 @@
 import UIKit
 import SnapKit
 
-final class HourlyWeatherView: UIView {
-    struct DataModel {
+final class DayHourlyWeatherView: UIView {
+    struct InputModel {
         let hour: String
         let icon: UIImage?
         let temp: Int
     }
     
+    private let descriptionLabel = UILabel()
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        setupDescriptionLabel()
         setupScrollView()
         setupStackView()
     }
@@ -30,8 +32,13 @@ final class HourlyWeatherView: UIView {
     }
     
     //  MARK: - Public Methods
-    func setup(_ models: [DataModel]) {
-        models.enumerated().forEach { index, model in
+    func setup(description: String, data: [InputModel]) {
+        descriptionLabel.text = description
+        descriptionLabel.textColor = .white
+        descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        descriptionLabel.numberOfLines = 0
+        
+        data.enumerated().forEach { index, model in
             let view = HourWeatherView()
             view.setup(model)
             stackView.addArrangedSubview(view)
@@ -43,12 +50,23 @@ final class HourlyWeatherView: UIView {
     }
     
     //  MARK: - Private Methods
+    private func setupDescriptionLabel() {
+        addSubview(descriptionLabel)
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview().inset(16)
+        }
+    }
+    
     private func setupScrollView() {
         addSubview(scrollView)
+        
         scrollView.showsHorizontalScrollIndicator = false
         
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(16)
+            make.bottom.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(100)
         }
     }
     
@@ -64,7 +82,7 @@ final class HourlyWeatherView: UIView {
 }
 
 //  MARK: - Extensions
-extension HourlyWeatherView {
+extension DayHourlyWeatherView {
     final class HourWeatherView: UIView {
         
         private let stackView = UIStackView()
@@ -86,9 +104,9 @@ extension HourlyWeatherView {
         }
         
         //  MARK: - Extension's Public Methods
-        func setup(_ model: DataModel) {
+        func setup(_ model: InputModel) {
             hourLabel.text = model.hour
-            iconView.image = model.icon
+            iconView.image = model.icon?.withRenderingMode(.alwaysOriginal)
             tempLabel.text = "\(model.temp)º"
         }
         

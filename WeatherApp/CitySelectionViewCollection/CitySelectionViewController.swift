@@ -12,9 +12,6 @@ final class CitySelectionViewController: UIViewController {
     
     //  MARK: - Constants
     private enum Constants: String {
-        case title = "Current location"
-        case subtitle = "Kansas City"
-        case description = "Mostly Sunny"
         case searchBarPlaceholder = "Search for a city or airport"
         case showWebViewButtonTitle = "Show Info"
         case navigationBarTitleText = "Weather"
@@ -48,7 +45,6 @@ final class CitySelectionViewController: UIViewController {
         setupSearchController()
         setupScrollView()
         setupStackView()
-        
         setupShowWebViewButton()
         setupUnitSelectionView()
     }
@@ -63,8 +59,6 @@ final class CitySelectionViewController: UIViewController {
             cityWeatherViewController.setup(data)
         }
         present(cityWeatherViewController, animated: true)
-//        navigationController?.pushViewController(cityWeatherViewController, animated: true)
-        
     }
     
     private func setupNavigationBar() {
@@ -134,28 +128,6 @@ final class CitySelectionViewController: UIViewController {
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
     }
-    
-    
-    
-    
-//    private func setupCityView() {
-//        contentView.addSubview(cityView)
-//        cityView.setup(CityView.InputModel(
-//            title: Constants.title.rawValue,
-//            subtitle: Constants.subtitle.rawValue,
-//            description: Constants.description.rawValue,
-//            minTemp: CityViewTempConstants.minTemp.rawValue,
-//            maxTemp: CityViewTempConstants.maxTemp.rawValue,
-//            currentTemp: CityViewTempConstants.currentTemp.rawValue))
-//        
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(cityViewTapped(_:)))
-//        cityView.addGestureRecognizer(tap)
-//        
-//        cityView.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(16)
-//            make.horizontalEdges.equalToSuperview().inset(16)
-//        }
-//    }
     
     private func setupShowWebViewButton() {
         contentView.addSubview(showWebViewButton)

@@ -9,8 +9,9 @@ import UIKit
 import SnapKit
 
 //  MARK: - DataModel Struct
-extension DayWeatherView {
-    struct DataModel {
+extension DailyWeatherView {
+    
+    struct InputModel {
         let title: String
         let image: UIImage?
         let minTemp: Double
@@ -21,8 +22,9 @@ extension DayWeatherView {
     }
 }
 
-//  MARK: - DayWeatherView Class
-final class DayWeatherView: UIView {
+//  MARK: - DailyWeatherView Class
+final class DailyWeatherView: UIView {
+    
     private let titleLabel = UILabel()
     private let iconView = UIImageView()
     private let minTempLabel = UILabel()
@@ -48,12 +50,14 @@ final class DayWeatherView: UIView {
     }
     
     //  MARK: - Public Methods
-    func setup(_ model: DataModel) {
-        titleLabel.text = model.title
-        iconView.image = model.image
-        minTempLabel.text = "\(Int(model.minDayTemp))º"
-        maxTempLabel.text = "\(Int(model.maxDayTemp))º"
-        tempLimitsView.setup(model)
+    func setup(_ data: InputModel?) {
+        if let data = data {
+            titleLabel.text = data.title
+            iconView.image = data.image?.withRenderingMode(.alwaysOriginal)
+            minTempLabel.text = "\(Int(data.minDayTemp))º"
+            maxTempLabel.text = "\(Int(data.maxDayTemp))º"
+            tempLimitsView.setup(data)
+        }
     }
     
     //  MARK: - Private Methods
@@ -114,7 +118,7 @@ final class DayWeatherView: UIView {
     }
 }
 
-extension DayWeatherView {
+extension DailyWeatherView {
     
     //  MARK: - TempLimitsView Class
     final class TempLimitsView: UIView {
@@ -134,7 +138,7 @@ extension DayWeatherView {
         }
         
         //  MARK: - Public Methods
-        func setup(_ model: DataModel) {
+        func setup(_ model: InputModel) {
             let weekTempDiff = model.maxTemp - model.minTemp
             let minOffset = abs(model.minTemp - model.minDayTemp) / weekTempDiff
             let maxOffset = abs(model.maxTemp - model.maxDayTemp) / weekTempDiff

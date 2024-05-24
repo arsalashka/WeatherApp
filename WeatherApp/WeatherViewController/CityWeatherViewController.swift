@@ -13,15 +13,6 @@ final class CityWeatherViewController: UIViewController {
     //  MARK: - Constants
     private enum Constants: String {
         case showDetailsButtonTitle = "Show Details"
-        case dayWeatherViewTitle = "Now"
-    }
-    
-    private enum DayWeatherViewConstants: Int {
-        case minTemp = 15
-        case maxTemp = 32
-        case minDayTemp = 19
-        case maxDayTemp = 30
-        case currentTemp = 28
     }
     
     //  MARK: - Properties
@@ -30,8 +21,8 @@ final class CityWeatherViewController: UIViewController {
     private let titleView = TitleView()
     private let bottomBarView = BottomBarView()
     private let temporaryContentView = UIView()
-    private let dayWeatherView = DayWeatherView()
-    private let hourlyWeatherView = HourlyWeatherView()
+    private let dayHourlyWeatherView = DayHourlyWeatherView()
+    private let dailyWeatherView = DailyWeatherView()
     private let showDetailsButton = UIButton()
     
     override func viewDidLoad() {
@@ -42,14 +33,16 @@ final class CityWeatherViewController: UIViewController {
         setupTitleView()
         setupBottomBarView()
         setupTemporaryContentView()
+        setupDayHourlyWeatherView()
         setupDailyWeatherView()
-        setupDayWeatherView()
         setupShowDetailsButton()
     }
     
     //  MARK: - Public Methods
     func setup(_ data: MOCKData) {
         titleView.setup(data.titleData)
+        dayHourlyWeatherView.setup(description: data.dayHourlyData.description, data: data.dayHourlyData.data)
+        dailyWeatherView.setup(data.dayData.first)
     }
 
     
@@ -108,48 +101,20 @@ final class CityWeatherViewController: UIViewController {
         }
     }
     
-    private func setupDailyWeatherView() {
-        temporaryContentView.addSubview(dayWeatherView)
-        dayWeatherView.setup(
-            DayWeatherView.DataModel(
-                title: Constants.dayWeatherViewTitle.rawValue,
-                image: UIImage(systemSymbol: .sunMaxFill)?.withRenderingMode(.alwaysOriginal),
-                minTemp: Double(DayWeatherViewConstants.minTemp.rawValue),
-                maxTemp: Double(DayWeatherViewConstants.maxTemp.rawValue),
-                minDayTemp: Double(DayWeatherViewConstants.minDayTemp.rawValue),
-                maxDayTemp: Double(DayWeatherViewConstants.maxDayTemp.rawValue),
-                currentTemp: Double(DayWeatherViewConstants.currentTemp.rawValue)
-            )
-        )
+    private func setupDayHourlyWeatherView() {
+        temporaryContentView.addSubview(dayHourlyWeatherView)
         
-        dayWeatherView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview().inset(16)
+        dayHourlyWeatherView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
         }
     }
     
-    private func setupDayWeatherView() {
-        temporaryContentView.addSubview(hourlyWeatherView)
+    private func setupDailyWeatherView() {
+        temporaryContentView.addSubview(dailyWeatherView)
         
-        var models: [HourlyWeatherView.DataModel] = []
-        let hours = ["Now", "12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "1"]
-        let icons = ["sun.rain.fill", "cloud.sun.rain.fill","sun.max.fill", "sun.max.fill", "cloud.sun.fill", "cloud.sun.fill",
-                     "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill", "sun.max.fill",
-                     "sun.max.fill", "sun.max.fill"]
-        let temps = [28, 28, 29, 30, 28, 27, 26, 24, 22, 18, 18, 17, 17, 16, 16]
-        
-        for index in 0..<hours.count {
-            models.append(HourlyWeatherView.DataModel(
-                hour: hours[index],
-                icon: UIImage(systemName: icons[index])?.withRenderingMode(.alwaysOriginal),
-                temp: temps[index]))
-        }
-        
-        hourlyWeatherView.setup(models)
-        
-        hourlyWeatherView.snp.makeConstraints { make in
-            make.top.equalTo(dayWeatherView.snp.bottom).offset(16)
+        dailyWeatherView.snp.makeConstraints { make in
+            make.top.equalTo(dayHourlyWeatherView.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.height.equalTo(100)
         }
     }
     
@@ -164,7 +129,7 @@ final class CityWeatherViewController: UIViewController {
         showDetailsButton.addTarget(self, action: #selector(showDetailsButtonPressed), for: .touchUpInside)
         
         showDetailsButton.snp.makeConstraints { make in
-            make.top.equalTo(hourlyWeatherView.snp.bottom).offset(16)
+            make.top.equalTo(dailyWeatherView.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.width.equalTo(120)
             make.bottom.equalToSuperview().inset(16)
