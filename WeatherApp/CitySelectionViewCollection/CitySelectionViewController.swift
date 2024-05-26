@@ -9,11 +9,9 @@ import UIKit
 import SnapKit
 
 final class CitySelectionViewController: UIViewController {
-    
     //  MARK: - Constants
     private enum Constants: String {
         case searchBarPlaceholder = "Search for a city or airport"
-        case showWebViewButtonTitle = "Show Info"
         case navigationBarTitleText = "Weather"
     }
     
@@ -29,7 +27,6 @@ final class CitySelectionViewController: UIViewController {
     private let tempStackView = UIStackView()
     private let cityView = CityView()
     private let unitSelectionView = UnitSelectionView()
-    private let showWebViewButton = UIButton()
     private let searchResultController = SearchResultViewController()
 
     
@@ -45,8 +42,17 @@ final class CitySelectionViewController: UIViewController {
         setupSearchController()
         setupScrollView()
         setupStackView()
-        setupShowWebViewButton()
         setupUnitSelectionView()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if let statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.height {
+            unitSelectionView.snp.updateConstraints { make in
+                make.top.equalToSuperview().offset(statusBarHeight + 50)
+            }
+        }
     }
     
     //  MARK: - Private Methods
@@ -55,9 +61,9 @@ final class CitySelectionViewController: UIViewController {
         
         cityWeatherViewController.modalPresentationStyle = .fullScreen
         
-        if let data {
-            cityWeatherViewController.setup(data)
-        }
+        guard let saveData = data else { return }
+        
+        cityWeatherViewController.setup(saveData)
         present(cityWeatherViewController, animated: true)
     }
     
@@ -129,32 +135,14 @@ final class CitySelectionViewController: UIViewController {
         }
     }
     
-    private func setupShowWebViewButton() {
-        contentView.addSubview(showWebViewButton)
-        showWebViewButton.setTitle(Constants.showWebViewButtonTitle.rawValue, for: .normal)
-        showWebViewButton.backgroundColor = .white.withAlphaComponent(0.4)
-        showWebViewButton.layer.cornerRadius = 8
-        
-        showWebViewButton.addTarget(
-            self,
-            action: #selector(showWebViewButtonPressed),
-            for: .touchUpInside
-        )
-        
-        showWebViewButton.snp.makeConstraints { make in
-            make.top.equalTo(tempStackView.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(210)
-        }
-    }
-    
     private func setupUnitSelectionView() {
-        contentView.addSubview(unitSelectionView)
+        navigationController?.view.addSubview(unitSelectionView)
         unitSelectionView.isHidden = true
+        unitSelectionView.delegate = self
         
         unitSelectionView.snp.makeConstraints { make in
-            make.top.equalTo(showWebViewButton.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
             make.size.equalTo(150)
         }
     }
@@ -163,15 +151,9 @@ final class CitySelectionViewController: UIViewController {
     @IBAction private func rightBarButtonItemPressed() {
         unitSelectionView.isHidden  = unitSelectionView.isHidden ? false : true
     }
-    
-    @IBAction private func showWebViewButtonPressed() {
-        let webViewController = WebViewController()
-        
-        navigationController?.pushViewController(webViewController, animated: true)
-    }
 }
 
-//  MARK: - Extensions
+//  MARK: - UISearchBarDelegate
 extension CitySelectionViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print(searchText)
@@ -179,5 +161,21 @@ extension CitySelectionViewController: UISearchBarDelegate {
     
     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
         print(#function)
+    }
+}
+
+//  MARK: - UnitSelectionViewDelegate
+extension CitySelectionViewController: UnitSelectionViewDelegate {
+    func didSelectUnit(_ unit: TempUnit) {
+        unitSelectionView.isHidden = true
+        print(unit.unitLabel)
+    }
+    
+    func showUnitInfo() {
+        unitSelectionView.isHidden = true
+        
+        let webViewController = WebViewController()
+        
+        navigationController?.pushViewController(webViewController, animated: true)
     }
 }
