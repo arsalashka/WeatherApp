@@ -8,35 +8,45 @@
 import UIKit
 import SnapKit
 
-final class UnitSelectionView: UIView {
+protocol UnitSelectionViewDelegate: AnyObject {
+    func didSelectUnit(_ unit: TempUnit)
+    func showUnitInfo()
+}
+
+enum TempUnit: Int, CaseIterable {
+    case Celsius
+    case Fahrenheit
+    case Kelvin
     
-    private enum TempUnit: Int, CaseIterable {
-        case Celsius
-        case Fahrenheit
-        case Kelvin
-        
-        var unitLabel: String {
-            switch self {
-            case .Celsius: return "Celsius"
-            case .Fahrenheit: return "Fahrenheit"
-            case .Kelvin: return "Kelvin"
-            }
+    var unitLabel: String {
+        switch self {
+        case .Celsius: return "Celsius"
+        case .Fahrenheit: return "Fahrenheit"
+        case .Kelvin: return "Kelvin"
         }
     }
+}
+
+final class UnitSelectionView: UIView {
     
     private enum Constants: Int {
         case numberOfPickerViewComponents = 1
         case rowHeightForComponent = 40
     }
     
-    private var tempUnitSelected = TempUnit.Celsius
     private let pickerView = UIPickerView()
+    private let infoButton = UIButton()
+    
+    weak var delegate: UnitSelectionViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .white.withAlphaComponent(0.1)
+        backgroundColor = .customDarkGray.withAlphaComponent(0.9)
+        layer.cornerRadius = 16
+        
         setupPickerView()
+        setupInfoButton()
     }
     
     required init?(coder: NSCoder) {
@@ -51,7 +61,28 @@ final class UnitSelectionView: UIView {
         pickerView.delegate = self
         
         pickerView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.horizontalEdges.equalToSuperview()
+        }
+    }
+    
+    private func setupInfoButton() {
+        addSubview(infoButton)
+        
+        infoButton.setImage(
+            UIImage(systemSymbol: .questionmarkCircle)?
+                .applyingSymbolConfiguration(.init(font: .systemFont(ofSize: 22))),
+            for: .normal
+        )
+        infoButton.tintColor = .white.withAlphaComponent(0.8)
+        
+        infoButton.addAction(UIAction { [weak self] _ in
+            self?.delegate?.showUnitInfo()
+        }, for: .touchUpInside)
+        
+        infoButton.snp.makeConstraints { make in
+            make.top.equalTo(pickerView.snp.bottom).offset(16)
+            make.bottom.trailing.equalToSuperview().inset(16)
+            make.size.equalTo(20)
         }
     }
 }
@@ -94,7 +125,6 @@ extension UnitSelectionView: UIPickerViewDelegate {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        tempUnitSelected = .allCases[row]
-        print(tempUnitSelected.unitLabel)
+        self.delegate?.didSelectUnit(TempUnit.allCases[row])
     }
 }

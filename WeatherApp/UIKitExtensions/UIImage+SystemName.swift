@@ -16,7 +16,7 @@ enum SFSymbolIdentifier: String {
     case sunMaxFill = "sun.max.fill"
     case sunRainFill = "sun.rain.fill"
     case cloudSunRainFill = "cloud.sun.rain.fill"
-    
+    case questionmarkCircle = "questionmark.circle"
 }
 
 extension UIImage {
