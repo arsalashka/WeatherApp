@@ -23,8 +23,8 @@ final class CitySelectionViewController: UIViewController {
     
     //  MARK: - Properties
     private let tableView = UITableView()
+    private let tableViewCellID = "cell"
     private let dataSource = MOCKData.data
-    
     private let unitSelectionView = UnitSelectionView()
     private let searchResultController = CitySearchViewController()
 
@@ -115,7 +115,7 @@ final class CitySelectionViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: tableViewCellID)
         
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
@@ -164,7 +164,7 @@ extension CitySelectionViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) //TODO: temp cellID
+        let cell = tableView.dequeueReusableCell(withIdentifier: tableViewCellID, for: indexPath)
         let data = dataSource[indexPath.row]
         let cityView = CityView()
         
