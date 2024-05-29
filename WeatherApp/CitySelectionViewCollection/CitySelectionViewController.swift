@@ -26,7 +26,7 @@ final class CitySelectionViewController: UIViewController {
     private let dataSource = MOCKData.data
     
     private let unitSelectionView = UnitSelectionView()
-    private let searchResultController = SearchResultViewController()
+    private let searchResultController = CitySearchViewController()
 
     
     //  MARK: - Override Methods
@@ -37,9 +37,7 @@ final class CitySelectionViewController: UIViewController {
         
         setupNavigationBar()
         setupSearchController()
-        
         setupUnitSelectionView()
-        
         setupTableView()
         
         presentCityWeatherViewController(with: MOCKData.data.first, animated: false)
@@ -166,7 +164,7 @@ extension CitySelectionViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) //TODO: temp cellID
         let data = dataSource[indexPath.row]
         let cityView = CityView()
         
