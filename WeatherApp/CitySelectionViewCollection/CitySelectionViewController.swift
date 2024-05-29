@@ -22,12 +22,11 @@ final class CitySelectionViewController: UIViewController {
     }
     
     //  MARK: - Properties
-    private let scrollView = UIScrollView()
-    private let contentView = UIView()
-    private let tempStackView = UIStackView()
-    private let cityView = CityView()
+    private let tableView = UITableView()
+    private let tableViewCellID = "cell"
+    private let dataSource = MOCKData.data
     private let unitSelectionView = UnitSelectionView()
-    private let searchResultController = SearchResultViewController()
+    private let searchResultController = CitySearchViewController()
 
     
     //  MARK: - Override Methods
@@ -36,13 +35,12 @@ final class CitySelectionViewController: UIViewController {
         
         view.backgroundColor = .black
         
-        presentCityWeatherViewController(with: MOCKData.data.first, animated: false)
-        
         setupNavigationBar()
         setupSearchController()
-        setupScrollView()
-        setupStackView()
         setupUnitSelectionView()
+        setupTableView()
+        
+        presentCityWeatherViewController(with: MOCKData.data.first, animated: false)
     }
     
     override func viewDidLayoutSubviews() {
@@ -97,44 +95,6 @@ final class CitySelectionViewController: UIViewController {
         searchController.searchBar.showsBookmarkButton = true
     }
     
-    private func setupScrollView() {
-        view.addSubview(scrollView)
-        scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        scrollView.addSubview(contentView)
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalTo(view)
-            make.height.equalTo(1500)
-        }
-    }
-    
-    private func setupStackView() {
-        contentView.addSubview(tempStackView)
-        tempStackView.axis = .vertical
-        tempStackView.spacing = 12
-        
-        MOCKData.data.forEach { data in
-            let cityView = CityView()
-            
-            cityView.setup(CityView.InputModel(title: data.titleData.title,
-                                               subtitle: data.titleData.subtitle,
-                                               description: data.titleData.description,
-                                               minTemp: data.titleData.minTemp,
-                                               maxTemp: data.titleData.maxTemp,
-                                               currentTemp: data.titleData.currentTemp))
-            
-            cityView.tapAction = { [weak self] in self?.presentCityWeatherViewController(with: data) }
-            tempStackView.addArrangedSubview(cityView)
-        }
-        
-        tempStackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(16)
-        }
-    }
-    
     private func setupUnitSelectionView() {
         navigationController?.view.addSubview(unitSelectionView)
         unitSelectionView.isHidden = true
@@ -144,6 +104,23 @@ final class CitySelectionViewController: UIViewController {
             make.top.equalToSuperview().inset(16)
             make.trailing.equalToSuperview().inset(16)
             make.size.equalTo(150)
+        }
+    }
+    
+    private func setupTableView() {
+        view.addSubview(tableView)
+        tableView.backgroundColor = .clear
+        tableView.estimatedRowHeight = 120
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: tableViewCellID)
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview()
         }
     }
     
@@ -177,5 +154,46 @@ extension CitySelectionViewController: UnitSelectionViewDelegate {
         let webViewController = WebViewController()
         
         navigationController?.pushViewController(webViewController, animated: true)
+    }
+}
+
+//  MARK: - UITableViewDataSource
+extension CitySelectionViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        dataSource.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: tableViewCellID, for: indexPath)
+        let data = dataSource[indexPath.row]
+        let cityView = CityView()
+        
+        cityView.setup(CityView.InputModel(
+            title: data.titleData.title,
+            subtitle: data.titleData.subtitle,
+            description: data.titleData.description,
+            minTemp: data.titleData.minTemp,
+            maxTemp: data.titleData.maxTemp,
+            currentTemp: data.titleData.currentTemp)
+        )
+        
+        cell.addSubview(cityView)
+        
+        cityView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview().inset(12)
+        }
+        
+        cell.selectionStyle = .none
+        cell.backgroundColor = .clear
+        
+        return cell
+    }
+}
+
+//  MARK: - UITableViewDelegate
+extension CitySelectionViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presentCityWeatherViewController(with: dataSource[indexPath.row])
     }
 }
