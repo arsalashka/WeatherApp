@@ -20,6 +20,13 @@ protocol CityWeatherViewModelOutput: AnyObject {
     func setupTitle(with data: TitleView.InputModel)
 }
 
+extension CityWeatherViewModel {
+    enum Constants: String {
+        case titleForFirstSection = "Hourly forecast"
+        case titleForSecondSection = "-day forecast"
+    }
+}
+
 
 final class CityWeatherViewModel: CityWeatherViewModelInput {
     struct Section {
@@ -54,16 +61,16 @@ final class CityWeatherViewModel: CityWeatherViewModelInput {
         var forecastItems: [Item] = weatherData.dayData.map { .dayWeather(data: $0) }
         
         forecastItems.insert(
-            .title(data: TitleCell.InputModel(imageSystemName: "calendar",
-                                              title: "Forecast for \(weatherData.dayData.count) days")),
+            .title(data: TitleCell.InputModel(imageSystemName: SFSymbolIdentifier.calendar.rawValue,
+                                              title: "\(weatherData.dayData.count)" + Constants.titleForSecondSection.rawValue)),
             at: 0)
         
         output?.dataSource = [
             Section(icon: nil,
                     title: nil,
                     items: [
-                        .title(data: TitleCell.InputModel(imageSystemName: "clock",
-                                                          title: "Hourly forecast")),
+                        .title(data: TitleCell.InputModel(imageSystemName: SFSymbolIdentifier.clock.rawValue,
+                                                          title: Constants.titleForFirstSection.rawValue)),
                         .dayHourlyWeather(data: weatherData.dayHourlyData.data)
                     ]),
             Section(icon: nil,
