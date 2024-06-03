@@ -9,11 +9,8 @@ import UIKit
 import SnapKit
 
 final class CityWeatherViewController: UIViewController {
-    
-    //  MARK: - Constants
-    private enum Constants: String {
-        case showDetailsButtonTitle = "Show Details"
-    }
+    typealias Section = CityWeatherViewModel.Section
+    typealias Item = CityWeatherViewModel.Item
     
     //  MARK: - Properties
     private let backgroundImage = UIImageView()
@@ -21,33 +18,32 @@ final class CityWeatherViewController: UIViewController {
     private let titleView = TitleView()
     private let bottomBarView = BottomBarView()
     private let temporaryContentView = UIView()
-    private let dayHourlyWeatherView = DayHourlyWeatherView()
-    private let dailyWeatherView = DailyWeatherView()
-    private let showDetailsButton = UIButton()
+    private let tableView = UITableView(frame: .zero, style: .insetGrouped)
+
+    var viewModel: CityWeatherViewModelInput!
+    var dataSource: [Section] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
                 
-        setupImageView()
+        setupBackgroundImage()
         setupTitleContainer()
         setupTitleView()
+        setupTableView()
         setupBottomBarView()
-        setupTemporaryContentView()
-        setupDayHourlyWeatherView()
-        setupDailyWeatherView()
-        setupShowDetailsButton()
+        
+        viewModel.output = self
+        viewModel.viewDidLoad()
     }
     
     //  MARK: - Public Methods
     func setup(_ data: MOCKData) {
         titleView.setup(data.titleData)
-        dayHourlyWeatherView.setup(description: data.dayHourlyData.description, data: data.dayHourlyData.data)
-        dailyWeatherView.setup(data.dayData.first)
     }
 
     
     //  MARK: - Private Methods
-    private func setupImageView() {
+    private func setupBackgroundImage() {
         view.addSubview(backgroundImage)
         backgroundImage.contentMode = .scaleAspectFill
         backgroundImage.image = .sky
@@ -63,7 +59,7 @@ final class CityWeatherViewController: UIViewController {
         titleContainer.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(titleContainer.snp.width).multipliedBy(0.7)
+            make.height.equalTo(titleContainer.snp.width).multipliedBy(0.65)
         }
     }
     
@@ -71,7 +67,27 @@ final class CityWeatherViewController: UIViewController {
         titleContainer.addSubview(titleView)
        
         titleView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(20)
+        }
+    }
+    
+    private func setupTableView() {
+        view.addSubview(tableView)
+
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.showsVerticalScrollIndicator = false
+        tableView.backgroundColor = .clear
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        tableView.registerCell(TitleCell.self)
+        tableView.registerCell(DayHourlyWeatherCell.self)
+        tableView.registerCell(DayWeatherCell.self)
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(titleContainer.snp.bottom)
+            make.horizontalEdges.equalToSuperview()
         }
     }
     
@@ -85,59 +101,11 @@ final class CityWeatherViewController: UIViewController {
         bottomBarView.snp.makeConstraints { make in
             make.bottom.horizontalEdges.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(60)
+            make.top.equalTo(tableView.snp.bottom)
         }
     }
     
-    private func setupTemporaryContentView() {
-        view.addSubview(temporaryContentView)
-        temporaryContentView.backgroundColor = .black
-        temporaryContentView.layer.borderWidth = 1
-        temporaryContentView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
-        temporaryContentView.layer.cornerRadius = 15
-        
-        temporaryContentView.snp.makeConstraints { make in
-            make.top.equalTo(titleContainer.snp.bottom).offset(20)
-            make.horizontalEdges.equalToSuperview().inset(20)
-        }
-    }
-    
-    private func setupDayHourlyWeatherView() {
-        temporaryContentView.addSubview(dayHourlyWeatherView)
-        
-        dayHourlyWeatherView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview()
-        }
-    }
-    
-    private func setupDailyWeatherView() {
-        temporaryContentView.addSubview(dailyWeatherView)
-        
-        dailyWeatherView.snp.makeConstraints { make in
-            make.top.equalTo(dayHourlyWeatherView.snp.bottom).offset(16)
-            make.horizontalEdges.equalToSuperview().inset(16)
-        }
-    }
-    
-    private func setupShowDetailsButton() {
-        temporaryContentView.addSubview(showDetailsButton)
-        
-        showDetailsButton.setTitle(Constants.showDetailsButtonTitle.rawValue, for: .normal)
-        showDetailsButton.titleLabel?.textColor = .white
-        showDetailsButton.backgroundColor = .darkBlue
-        showDetailsButton.layer.cornerRadius = 8
-        
-        showDetailsButton.addTarget(self, action: #selector(showDetailsButtonPressed), for: .touchUpInside)
-        
-        showDetailsButton.snp.makeConstraints { make in
-            make.top.equalTo(dailyWeatherView.snp.bottom).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(120)
-            make.bottom.equalToSuperview().inset(16)
-        }
-    }
-    
-    //  MARK: - @objc Methods
-    @IBAction private func showDetailsButtonPressed() {
+    private func presentCityWeatherDetailedViewController(with weatherData: MOCKData?) {
         let cityWeatherDetailsViewController = CityWeatherDetailsViewController()
         let navigationController = UINavigationController(rootViewController: cityWeatherDetailsViewController)
         
@@ -150,5 +118,55 @@ final class CityWeatherViewController: UIViewController {
         sheetViewController?.selectedDetentIdentifier = .large
         
         self.present(navigationController, animated: true)
+    }
+}
+
+extension CityWeatherViewController: UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        dataSource.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        dataSource[section].items.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = dataSource[indexPath.section].items[indexPath.row]
+        let cell: UITableViewCell
+
+        switch item {
+        case .title(let data):
+            cell = tableView.dequeue(TitleCell.self, for: indexPath)
+            (cell as? TitleCell)?.setup(data)
+        case .dayHourlyWeather(let data):
+            cell = tableView.dequeue(DayHourlyWeatherCell.self, for: indexPath)
+            (cell as? DayHourlyWeatherCell)?.setup(data)
+        case .dayWeather(let data):
+            cell = tableView.dequeue(DayWeatherCell.self, for: indexPath)
+            (cell as? DayWeatherCell)?.setup(data)
+        }
+
+        cell.selectionStyle = .none
+        cell.backgroundColor = .lightBlue.withAlphaComponent(0.9)
+
+        return cell
+    }
+}
+
+extension CityWeatherViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        presentCityWeatherDetailedViewController(with: nil)
+    }
+}
+
+extension CityWeatherViewController: CityWeatherViewModelOutput {
+    func setupTitle(with data: TitleView.InputModel) {
+        titleView.setup(data)
+    }
+    
+    func reloadData() {
+        tableView.reloadData()
     }
 }

@@ -1,28 +1,30 @@
 //
-//  HourlyWeatherView.swift
+//  DayHourlyWeatherCell.swift
 //  WeatherApp
 //
-//  Created by Arsalan on 08.05.2024.
+//  Created by Arsalan on 31.05.2024.
 //
 
 import UIKit
 import SnapKit
 
-final class DayHourlyWeatherView: UIView {
+final class DayHourlyWeatherCell: UITableViewCell {
     struct InputModel {
         let hour: String
-        let icon: UIImage?
+        let imageSystemName: String
         let temp: Int
     }
     
-    private let descriptionLabel = UILabel()
+//    MARK: - Properties
+    static let dayHourlyWeatherCellID = "DayHourlyWeatherCellID"
+    
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+//    MARK: - Lifecycle
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        setupDescriptionLabel()
         setupScrollView()
         setupStackView()
     }
@@ -31,15 +33,13 @@ final class DayHourlyWeatherView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //  MARK: - Public Methods
-    func setup(description: String, data: [InputModel]) {
-        descriptionLabel.text = description
-        descriptionLabel.textColor = .white
-        descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
-        descriptionLabel.numberOfLines = 0
+//    MARK: - Public Methods
+    func setup(_ models: [InputModel]) {
+        stackView.subviews.forEach { $0.removeFromSuperview() }
         
-        data.enumerated().forEach { index, model in
+        models.enumerated().forEach { index, model in
             let view = HourWeatherView()
+            
             view.setup(model)
             stackView.addArrangedSubview(view)
             
@@ -49,23 +49,15 @@ final class DayHourlyWeatherView: UIView {
         }
     }
     
-    //  MARK: - Private Methods
-    private func setupDescriptionLabel() {
-        addSubview(descriptionLabel)
-        
-        descriptionLabel.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalToSuperview().inset(16)
-        }
-    }
-    
+//    MARK: - Setup UI
     private func setupScrollView() {
-        addSubview(scrollView)
-        
+        contentView.addSubview(scrollView)
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(descriptionLabel.snp.bottom).offset(16)
-            make.bottom.horizontalEdges.equalToSuperview().inset(16)
+            make.verticalEdges.equalToSuperview().inset(12)
+            make.horizontalEdges.equalToSuperview()
             make.height.equalTo(100)
         }
     }
@@ -81,8 +73,7 @@ final class DayHourlyWeatherView: UIView {
     }
 }
 
-//  MARK: - Extensions
-extension DayHourlyWeatherView {
+extension DayHourlyWeatherCell {
     final class HourWeatherView: UIView {
         
         private let stackView = UIStackView()
@@ -106,7 +97,7 @@ extension DayHourlyWeatherView {
         //  MARK: - Extension's Public Methods
         func setup(_ model: InputModel) {
             hourLabel.text = model.hour
-            iconView.image = model.icon?.withRenderingMode(.alwaysOriginal)
+            iconView.image = UIImage(systemName: model.imageSystemName)?.withRenderingMode(.alwaysOriginal)
             tempLabel.text = "\(model.temp)º"
         }
         
