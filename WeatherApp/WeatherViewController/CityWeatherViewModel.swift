@@ -15,9 +15,9 @@ protocol CityWeatherViewModelInput {
 }
 
 protocol CityWeatherViewModelOutput: AnyObject {
-    var dataSource: [CityWeatherViewModel.Section] { get set }
+    var sections: [CityWeatherViewModel.Section] { get set }
     
-    func setupTitle(with data: TitleView.InputModel)
+    func setupTitle(with data: TitleData)
 }
 
 extension CityWeatherViewModel {
@@ -27,56 +27,49 @@ extension CityWeatherViewModel {
     }
 }
 
-
 final class CityWeatherViewModel: CityWeatherViewModelInput {
-    struct Section {
-        let icon: UIImage?
-        let title: String?
+    struct Section: Hashable {
+        let imageSystemName: String
+        let title: String
+        let description: String?
         let items: [Item]
     }
     
-    enum Item {
-        case title(data: TitleCell.InputModel)
-        case dayHourlyWeather(data: [DayHourlyWeatherCell.InputModel])
-        case dayWeather(data: DayWeatherCell.InputModel)
-    }
-    
-    private let weatherData: MOCKData?
-    
-    weak var output: CityWeatherViewModelOutput?
-    
-    init(weatherData: MOCKData?) {
-        self.weatherData = weatherData
-    }
-    
-    func viewDidLoad() {
-        if let weatherData {
-            output?.setupTitle(with: weatherData.titleData)
-            
-            prepareDataSource(with: weatherData)
+    enum Item: Hashable {
+        case dayHourlyWeather(data: DayHourlyData)
+        case dayWeather(data: DayData)
+
+        var id: String {
+            switch self {
+            case .dayHourlyWeather(let data): return data.id
+            case .dayWeather(let data): return data.id
+            }
         }
     }
     
-    private func prepareDataSource(with weatherData: MOCKData) {
-        var forecastItems: [Item] = weatherData.dayData.map { .dayWeather(data: $0) }
-        
-        forecastItems.insert(
-            .title(data: TitleCell.InputModel(imageSystemName: SFSymbolIdentifier.calendar.rawValue,
-                                              title: "\(weatherData.dayData.count)" + Constants.titleForSecondSection.rawValue)),
-            at: 0)
-        
-        output?.dataSource = [
-            Section(icon: nil,
-                    title: nil,
-                    items: [
-                        .title(data: TitleCell.InputModel(imageSystemName: SFSymbolIdentifier.clock.rawValue,
-                                                          title: Constants.titleForFirstSection.rawValue)),
-                        .dayHourlyWeather(data: weatherData.dayHourlyData.data)
-                    ]),
-            Section(icon: nil,
-                    title: nil,
-                    items: forecastItems
-                    )
+    private let weatherData: CityWeatherData!
+    
+    weak var output: CityWeatherViewModelOutput?
+    
+    init(weatherData: CityWeatherData?) {
+        self.weatherData = weatherData ?? CityWeatherData.mockData.first
+    }
+    
+    func viewDidLoad() {
+        output?.setupTitle(with: weatherData.titleData)
+        prepareDataSource()
+    }
+    
+    private func prepareDataSource() {
+        output?.sections = [
+            Section(imageSystemName: SFSymbolIdentifier.clock.rawValue,
+                    title: Constants.titleForFirstSection.rawValue,
+                    description: weatherData.dayHourlyDescription,
+                    items: weatherData.dayHourlyData.map { .dayHourlyWeather(data: $0) }),
+            Section(imageSystemName: SFSymbolIdentifier.calendar.rawValue,
+                    title: "\(weatherData.dayData.count)" + Constants.titleForSecondSection.rawValue,
+                    description: nil,
+                    items: weatherData.dayData.map { .dayWeather(data: $0) })
         ]
     }
 }

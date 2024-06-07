@@ -9,17 +9,6 @@ import UIKit
 import SnapKit
 
 final class TitleView: UIView {
-    
-    //  MARK: - Data Model
-    struct InputModel {
-        let title: String
-        let subtitle: String?
-        let currentTemp: Int
-        let description: String
-        let minTemp: Int
-        let maxTemp: Int
-    }
-    
     //  MARK: - Properties
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
@@ -45,7 +34,7 @@ final class TitleView: UIView {
     }
     
     //  MARK: - Public Methods
-    func setup(_ data: InputModel) {
+    func setup(_ data: TitleData) {
         titleLabel.text = data.title
         subTitleLabel.text = data.subtitle
         subTitleLabel.isHidden = data.subtitle == nil
