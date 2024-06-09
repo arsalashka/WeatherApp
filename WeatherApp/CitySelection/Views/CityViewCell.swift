@@ -8,20 +8,9 @@
 import UIKit
 import SnapKit
 
-//  MARK: - Input Model
-extension CityView {
-    struct InputModel {
-        let title: String
-        let subtitle: String?
-        let description: String
-        let minTemp: Int
-        let maxTemp: Int
-        let currentTemp: Int
-    }
-}
-
-//  MARK: - CityView class
-final class CityView: UIView {
+final class CityViewCell: UICollectionViewCell {
+    static let id = "cell"
+    
     let imageView = UIImageView()
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
@@ -49,13 +38,13 @@ final class CityView: UIView {
     }
     
     //  MARK: - Public Methods
-    func setup(_ model: InputModel) {
-        titleLabel.text = model.title
-        subtitleLabel.text = model.subtitle
-        subtitleLabel.isHidden = model.subtitle == nil
-        tempLabel.text = "\(model.currentTemp)º"
-        descriptionLabel.text = model.description
-        tempLimitsLabel.text = "Max: \(model.maxTemp)º, min: \(model.minTemp)º"
+    func setup(_ data: TitleData) {
+        titleLabel.text = data.title
+        subtitleLabel.text = data.subtitle
+        subtitleLabel.isHidden = data.subtitle == nil
+        tempLabel.text = "\(data.currentTemp)º"
+        descriptionLabel.text = data.description
+        tempLimitsLabel.text = "Max: \(data.maxTemp)º, min: \(data.minTemp)º"
     }
     
     //  MARK: - Private Methods

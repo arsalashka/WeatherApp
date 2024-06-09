@@ -13,10 +13,22 @@ final class WebViewController: UIViewController {
     
     private enum Constants: String {
         case urlString = "https://meteoinfo.ru/t-scale"
-        case navigationBarTitle = "Info"
     }
     
+    private var navigationBarTitle = ""
     private let webView = WKWebView()
+    
+    
+    
+    init(with title: String) {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.navigationBarTitle = title
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +42,7 @@ final class WebViewController: UIViewController {
     
     //  MARK: - Private Methods
     private func setupNavigationBar() {
-        title = Constants.navigationBarTitle.rawValue
+        title = navigationBarTitle
         navigationController?.navigationBar.backgroundColor = .black
         navigationController?.navigationBar.prefersLargeTitles = false
         

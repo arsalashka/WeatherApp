@@ -8,20 +8,8 @@
 import UIKit
 import SnapKit
 
-final class DayWeatherCell: UITableViewCell {
-    struct InputModel {
-        let title: String
-        let imageSystemName: String
-        let minTemp: Double
-        let maxTemp: Double
-        let minDayTemp: Double
-        let maxDayTemp: Double
-        let currentTemp: Double?
-    }
-    
+final class DayWeatherCell: UICollectionViewCell {
     //    MARK: - Properties
-    static let dayWeatherCellID = "DayWeatherCellID"
-    
     private let titleLabel = UILabel()
     private let iconView = UIImageView()
     private let minTempLabel = UILabel()
@@ -29,8 +17,8 @@ final class DayWeatherCell: UITableViewCell {
     private let maxTempLabel = UILabel()
     
     //    MARK: - Lifecycle
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         setupTitleLabel()
         setupIconView()
@@ -43,27 +31,18 @@ final class DayWeatherCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        contentView.snp.makeConstraints { make in
-            make.height.equalTo(50)
-            make.width.equalToSuperview()
-        }
-    }
-    
     //  MARK: - Public Methods
-    func setup(_ inputModel: InputModel) {
-        titleLabel.text = inputModel.title
-        iconView.image = UIImage(systemName: inputModel.imageSystemName)?.withRenderingMode(.alwaysOriginal)
-        minTempLabel.text = "\(Int(inputModel.minDayTemp))º"
-        maxTempLabel.text = "\(Int(inputModel.maxDayTemp))º"
-        tempLimitsView.setup(inputModel)
+    func setup(_ data: DayData) {
+        titleLabel.text = data.title
+        iconView.image = UIImage(systemName: data.imageSystemName)?.withRenderingMode(.alwaysOriginal)
+        minTempLabel.text = "\(Int(data.minDayTemp))º"
+        maxTempLabel.text = "\(Int(data.maxDayTemp))º"
+        tempLimitsView.setup(data)
     }
     
     //  MARK: - Private Methods
     private func setupTitleLabel() {
-        contentView.addSubview(titleLabel)
+        addSubview(titleLabel)
         titleLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
         titleLabel.textColor = .white
         
@@ -75,7 +54,7 @@ final class DayWeatherCell: UITableViewCell {
     }
     
     private func setupIconView() {
-        contentView.addSubview(iconView)
+        addSubview(iconView)
         iconView.contentMode = .scaleAspectFit
         
         iconView.snp.makeConstraints { make in
@@ -85,7 +64,7 @@ final class DayWeatherCell: UITableViewCell {
     }
     
     private func setupMinTempLabel() {
-        contentView.addSubview(minTempLabel)
+        addSubview(minTempLabel)
         minTempLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
         minTempLabel.textColor = .white.withAlphaComponent(0.7)
         minTempLabel.textAlignment = .center
@@ -98,7 +77,7 @@ final class DayWeatherCell: UITableViewCell {
     }
     
     private func setupTempLimitsView() {
-        contentView.addSubview(tempLimitsView)
+        addSubview(tempLimitsView)
         
         tempLimitsView.snp.makeConstraints { make in
             make.leading.equalTo(minTempLabel.snp.trailing).offset(16)
@@ -107,7 +86,7 @@ final class DayWeatherCell: UITableViewCell {
     }
     
     private func setupMaxTempLabel() {
-        contentView.addSubview(maxTempLabel)
+        addSubview(maxTempLabel)
         maxTempLabel.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
         maxTempLabel.textAlignment = .center
         maxTempLabel.textColor = .white.withAlphaComponent(0.7)
@@ -141,10 +120,10 @@ extension DayWeatherCell {
         }
         
         //  MARK: - Public Methods
-        func setup(_ model: InputModel) {
-            let weekTempDiff = model.maxTemp - model.minTemp
-            let minOffset = abs(model.minTemp - model.minDayTemp) / weekTempDiff
-            let maxOffset = abs(model.maxTemp - model.maxDayTemp) / weekTempDiff
+        func setup(_ data: DayData) {
+            let weekTempDiff = data.maxTemp - data.minTemp
+            let minOffset = abs(data.minTemp - data.minDayTemp) / weekTempDiff
+            let maxOffset = abs(data.maxTemp - data.maxDayTemp) / weekTempDiff
             
             tempLimitsView.snp.remakeConstraints { make in
                 make.trailing.equalToSuperview().multipliedBy(1 - maxOffset)
@@ -152,8 +131,8 @@ extension DayWeatherCell {
                 make.width.equalToSuperview().multipliedBy(1 - minOffset - maxOffset)
             }
             
-            if let currentTemp = model.currentTemp {
-                let currentTempOffset = abs(model.minTemp - currentTemp) / weekTempDiff
+            if let currentTemp = data.currentTemp {
+                let currentTempOffset = abs(data.minTemp - currentTemp) / weekTempDiff
                 
                 if currentTempOffset == 0 {
                     currentTempView.snp.remakeConstraints { make in
@@ -205,5 +184,4 @@ extension DayWeatherCell {
             }
         }
     }
-
 }
