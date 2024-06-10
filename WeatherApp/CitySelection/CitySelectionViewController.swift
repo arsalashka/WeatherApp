@@ -10,7 +10,7 @@ import SnapKit
 
 extension CitySelectionViewController {
     typealias Section = CitySelectionViewModel.Section
-    typealias Item = CitySelectionViewModel.Item
+    typealias Item = CityWeatherData
     
     //  MARK: - Constants
     private enum Constants: String {
@@ -59,10 +59,9 @@ final class CitySelectionViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if let statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.height {
-            unitSelectionView.snp.updateConstraints { make in
-                make.top.equalToSuperview().offset(statusBarHeight + 50)
-            }
+        guard let statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.height else { return }
+        unitSelectionView.snp.updateConstraints { make in
+            make.top.equalToSuperview().offset(statusBarHeight + 50)
         }
     }
     
@@ -218,7 +217,6 @@ final class CitySelectionViewController: UIViewController {
 //  MARK: - UISearchBarDelegate
 extension CitySelectionViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print(searchText)
     }
     
     func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
