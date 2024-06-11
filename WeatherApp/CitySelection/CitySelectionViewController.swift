@@ -40,6 +40,9 @@ final class CitySelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let config = APIEndpointProvider()
+        
+        
         view.backgroundColor = .black
         
         viewModel?.output = self
