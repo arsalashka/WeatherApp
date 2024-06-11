@@ -10,14 +10,15 @@ import SnapKit
 
 final class CitySearchViewController: UIViewController {
     
-    private let cityList = [
-        "Kansas", "Orlando", "New York", "Chicago", "Los Angeles",
-        "Miami", "Seattle", "San Diego", "Oregon", "Atlanta"
-    ]
     private let tableView = UITableView()
     private let cityCellID = "cell"
-    private var filteredCityList: [String] = []
-    private var searchQuery = ""
+    
+    var viewModel: CitySearchViewModelInput!
+    var cityList: [City] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +26,8 @@ final class CitySearchViewController: UIViewController {
         view.backgroundColor = .black.withAlphaComponent(0.5)
         
         setupTableView()
+        
+        viewModel.output = self
     }
     
     private func setupTableView() {
@@ -45,32 +48,26 @@ final class CitySearchViewController: UIViewController {
 extension CitySearchViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
-        guard let query = searchController.searchBar.text else { return }
+        guard let query = searchController.searchBar.searchTextField.text else { return }
         
-        searchQuery = query.lowercased()
+        let searchQuery = query.lowercased()
         view.backgroundColor = .black.withAlphaComponent(searchQuery.isEmpty ? 0.5 : 1)
         
-        filteredCityList = cityList.filter {
-            $0.lowercased().contains(searchQuery)
-        }
-        
+        viewModel.filterCity(with: searchQuery)
         tableView.reloadData()
     }
 }
 
 extension CitySearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        filteredCityList.count
+        cityList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cityCellID, for: indexPath)
-        let attributedText = NSAttributedString(
-            string: filteredCityList[indexPath.row],
-            attributes: [.foregroundColor: UIColor.white.withAlphaComponent(0.5)]
-        )
+    
+        cell.textLabel?.attributedText = viewModel.getAttributedTitle(for: indexPath)
         
-        cell.textLabel?.attributedText = attributedText
         cell.backgroundColor = .clear
         cell.imageView?.image = UIImage()
         
@@ -85,6 +82,9 @@ extension CitySearchViewController: UITableViewDataSource {
 extension CitySearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print(filteredCityList[indexPath.row])
+        print(cityList[indexPath.row])
     }
+}
+
+extension CitySearchViewController: CitySearchViewModelOutput {
 }

@@ -186,6 +186,7 @@ final class CitySelectionViewController: UIViewController {
     
     private func setupSearchController() {
         let searchResultController = CitySearchViewController()
+        searchResultController.viewModel = CitySearchViewModel(cityListProvider: CityListProviderImpl())
         let searchController = UISearchController(searchResultsController: searchResultController)
         
         searchController.searchResultsUpdater = searchResultController
