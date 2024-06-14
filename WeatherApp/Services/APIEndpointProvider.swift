@@ -36,12 +36,16 @@ final class APIEndpointProvider {
             fatalError("\(Constants.fileName.rawValue).\(Constants.fileExtension.rawValue) not found")
         }
         
-        appID = config[Constants.addID.rawValue] as! String
+        guard let saveAppID = config[Constants.addID.rawValue] as? String,
+              let api = config[Constants.api.rawValue] as? [String: Any],
+              let host = api[Constants.host.rawValue] as? String,
+              let scheme = api[Constants.scheme.rawValue] as? String,
+              let version = api[Constants.version.rawValue] as? String
+        else {
+            fatalError()
+        }
         
-        let api = config[Constants.api.rawValue] as! [String: Any]
-        let host = api[Constants.host.rawValue] as! String
-        let scheme = api[Constants.scheme.rawValue] as! String
-        let version = api[Constants.version.rawValue] as! String
+        appID = saveAppID
         
         var urlComponents = URLComponents()
         
@@ -49,6 +53,9 @@ final class APIEndpointProvider {
         urlComponents.host = host
         urlComponents.path = version
         
-        baseURL = urlComponents.url!
+        guard let saveURL = urlComponents.url else { fatalError() }
+        baseURL = saveURL
+        
+        print(baseURL)
     }
 }
