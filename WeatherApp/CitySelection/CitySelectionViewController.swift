@@ -40,6 +40,9 @@ final class CitySelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let config = APIEndpointProvider()
+        
+        
         view.backgroundColor = .black
         
         viewModel?.output = self
@@ -183,6 +186,7 @@ final class CitySelectionViewController: UIViewController {
     
     private func setupSearchController() {
         let searchResultController = CitySearchViewController()
+        searchResultController.viewModel = CitySearchViewModel(cityListProvider: CityListProviderImpl())
         let searchController = UISearchController(searchResultsController: searchResultController)
         
         searchController.searchResultsUpdater = searchResultController
