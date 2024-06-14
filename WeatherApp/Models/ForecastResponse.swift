@@ -24,6 +24,7 @@ struct ForecastResponse: Codable {
 extension ForecastResponse {
     
 }
+
 struct ItemData: Codable {
     let dateUnix: Int
     let main: [MainData]

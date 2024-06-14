@@ -41,6 +41,7 @@ final class CitySelectionViewController: UIViewController {
         super.viewDidLoad()
         
         let config = APIEndpointProvider()
+        config.getURL(with: .weather(id: 4167147))
         
         
         view.backgroundColor = .black
