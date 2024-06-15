@@ -9,10 +9,13 @@ import Foundation
 
 protocol WeatherProvider {
     var delegate: WeatherProviderDelegate? { get set }
-    var weatherDataCache: [CityWeatherData] { get set }
     
     func sceneDidEnterBackground()
     func sceneWillEnterForeground()
+    
+    func getForecastForCity(with id: Int,
+                            completionHandler: @escaping (CityWeatherData) -> Void,
+                            errorHandler: ((AppError) -> Void)?)
 }
 
 protocol WeatherProviderDelegate: AnyObject {
@@ -20,9 +23,12 @@ protocol WeatherProviderDelegate: AnyObject {
 }
 
 final class WeatherProviderImpl: WeatherProvider {
-    
     weak var delegate: WeatherProviderDelegate?
-    var weatherDataCache: [CityWeatherData] = []
+    private let dataProvider = APIDataProvider()
+    private var currentPlaceCoordinates = Coordinate(lat: 28.5383, lon: -81.3792)
+    private var weatherDataCache: [Int: CityWeatherData] = [:]
+    private var weatherCache: [Int: WeatherResponse] = [:]
+    private var forecastCache: [Int: ForecastResponse] = [:]
     
     func sceneDidEnterBackground() {
         print(#function)
@@ -34,5 +40,9 @@ final class WeatherProviderImpl: WeatherProvider {
         weatherDataCache = CityWeatherData.mockData
         
         print(#function)
+    }
+    
+    func getForecastForCity(with id: Int, completionHandler: @escaping (CityWeatherData) -> Void, errorHandler: ((AppError) -> Void)?) {
+        <#code#>
     }
 }

@@ -69,8 +69,3 @@ struct SystemData: Codable {
         case partOfDay = "pod"
     }
 }
-
-struct Coordinate: Codable {
-    let lat: Double
-    let lon: Double
-}
