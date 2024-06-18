@@ -36,18 +36,15 @@ final class CitySelectionViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private var snapshot: NSDiffableDataSourceSnapshot<Section, Item>! = nil
     
+    private var presentedCityID: Int?
+    
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let config = APIEndpointProvider()
-        config.getURL(with: .weather(id: 4167147))
-        
-        
         view.backgroundColor = .black
         
         viewModel?.output = self
-        viewModel?.viewDidLoad()
         
         setupNavigationBar()
         setupSearchController()
@@ -57,7 +54,7 @@ final class CitySelectionViewController: UIViewController {
         createDataSource()
         reloadDataSource()
         
-        presentCityWeatherViewController(with: sections.first?.items.first, animated: false)
+        presentCityWeather(with: sections.first?.items.first ?? .emptyData, animated: false)
     }
     
     override func viewDidLayoutSubviews() {
@@ -160,13 +157,17 @@ final class CitySelectionViewController: UIViewController {
         dataSource?.apply(snapshot)
     }
     
-    private func presentCityWeatherViewController(with data: CityWeatherData?, animated: Bool = true) {
-        let cityWeatherViewController = CityWeatherViewController()
+    private func presentCityWeather(with data: CityWeatherData?, animated: Bool = true) {
+        let viewController = CityWeatherViewController()
+        let viewModel = CityWeatherViewModel()
         
-        cityWeatherViewController.viewModel = CityWeatherViewModel(weatherData: data)
-        cityWeatherViewController.modalPresentationStyle = .fullScreen
-      
-        present(cityWeatherViewController, animated: true)
+        if let data { viewModel.setup(data) }
+        viewController.viewModel = viewModel
+        viewController.modalPresentationStyle = .fullScreen
+        
+        present(viewController, animated: animated) { [weak self] in
+            self?.viewModel?.getForecastForCity(with: data?.id)
+        }
     }
     
     private func setupNavigationBar() {
@@ -248,10 +249,15 @@ extension CitySelectionViewController: UnitSelectionViewDelegate {
 //  MARK: - UICollectionViewDelegate
 extension CitySelectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        presentCityWeatherViewController(with: sections[indexPath.section].items[indexPath.row])
+        presentCityWeather(with: sections[indexPath.section].items[indexPath.row])
     }
 }
 
 //  MARK: - CitySelectionViewModelOutput
 extension CitySelectionViewController: CitySelectionViewModelOutput {
+    func setup(_ weatherData: CityWeatherData) {
+        DispatchQueue.main.async { [self] in
+            (presentedViewController as? CityWeatherViewController)?.viewModel.setup(weatherData)
+        }
+    }
 }

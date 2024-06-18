@@ -14,7 +14,7 @@ final class CitySearchViewController: UIViewController {
     private let cityCellID = "cell"
     
     var viewModel: CitySearchViewModelInput!
-    var cityList: [City] = [] {
+    var cityList: [CityData] = [] {
         didSet {
             tableView.reloadData()
         }

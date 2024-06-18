@@ -34,13 +34,15 @@ final class TitleView: UIView {
     }
     
     //  MARK: - Public Methods
-    func setup(_ data: TitleData) {
-        titleLabel.text = data.title
-        subTitleLabel.text = data.subtitle
-        subTitleLabel.isHidden = data.subtitle == nil
-        tempLabel.text = "\(data.currentTemp)º"
-        descriptionLabel.text = data.description
-        tempLimitsLabel.text = "Max: \(data.maxTemp)º, min: \(data.minTemp)º"
+    func setup(_ model: TitleViewData) {
+        titleLabel.text = model.title
+        subTitleLabel.text = model.subtitle
+        subTitleLabel.isHidden = model.subtitle == nil
+        tempLabel.text = model.currentTemp?.formatedTemp()
+        descriptionLabel.text = model.description
+        if let maxTemp = model.maxTemp, let minTemp = model.minTemp {
+            tempLimitsLabel.text = "Max: \(maxTemp.formatedTemp()), min: \(minTemp.formatedTemp())"
+        }
     }
     
     //  MARK: - Private Methods for setup UI elements

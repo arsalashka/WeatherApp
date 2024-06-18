@@ -30,7 +30,7 @@ extension ForecastResponse {
         let rain: PrecipitationData?
         let snow: PrecipitationData?
         let system: SystemData
-
+        
         enum CodingKeys: String, CodingKey {
             case dateUnix = "dt"
             case main
@@ -42,13 +42,13 @@ extension ForecastResponse {
             case snow
             case system = "sys"
         }
-
+        
         init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
-
+            
             let dateUnix = try container.decode(Double.self, forKey: .dateUnix)
             self.date = Date(timeIntervalSince1970: dateUnix)
-
+            
             self.main = try container.decode(MainData.self, forKey: .main)
             self.weather = try container.decode([WeatherData].self, forKey: .weather)
             self.clouds = try container.decode(CloudsData.self, forKey: .clouds)

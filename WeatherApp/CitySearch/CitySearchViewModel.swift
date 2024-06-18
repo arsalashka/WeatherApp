@@ -15,7 +15,7 @@ protocol CitySearchViewModelInput {
 }
 
 protocol CitySearchViewModelOutput: AnyObject {
-    var cityList: [City] { get set }
+    var cityList: [CityData] { get set }
 }
 
 final class CitySearchViewModel: CitySearchViewModelInput {

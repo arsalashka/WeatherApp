@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CityListProvider {
-    var cityList: [City] { get }
+    var cityList: [CityData] { get }
 
 }
 
@@ -20,7 +20,7 @@ extension CityListProviderImpl {
 }
 
 final class CityListProviderImpl: CityListProvider {
-    var cityList: [City] = []
+    var cityList: [CityData] = []
     
     init() {
         guard let path = Bundle.main.path(
@@ -36,6 +36,6 @@ final class CityListProviderImpl: CityListProvider {
 
         let decoder = JSONDecoder()
         
-        cityList = try! decoder.decode([City].self, from: data)
+        cityList = try! decoder.decode([CityData].self, from: data)
     }
 }
