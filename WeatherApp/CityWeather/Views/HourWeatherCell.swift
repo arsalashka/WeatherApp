@@ -29,10 +29,11 @@ final class HourlyWeatherCell: UICollectionViewCell {
     }
     
     // MARK: Public methods
-    func setup(_ model: DayHourlyData) {
-        hourLabel.text = model.hour
-        iconView.image = UIImage(systemName: model.imageSystemName)?.withRenderingMode(.alwaysOriginal)
-        tempLabel.text = "\(model.temp)º"
+    func setup(_ model: DayHourlyViewData) {
+        hourLabel.text = model.title
+        iconView.image = UIImage(systemName: model.imageSystemName ?? SFSymbolIdentifier.sunFill.rawValue)?
+                            .withRenderingMode(.alwaysOriginal)
+        tempLabel.text = model.temp
     }
     
     // MARK: Private Methods

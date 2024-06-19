@@ -32,12 +32,12 @@ final class DayWeatherCell: UICollectionViewCell {
     }
     
     //  MARK: - Public Methods
-    func setup(_ data: DayData) {
-        titleLabel.text = data.title
-        iconView.image = UIImage(systemName: data.imageSystemName)?.withRenderingMode(.alwaysOriginal)
-        minTempLabel.text = "\(Int(data.minDayTemp))º"
-        maxTempLabel.text = "\(Int(data.maxDayTemp))º"
-        tempLimitsView.setup(data)
+    func setup(_ model: DayViewData) {
+        titleLabel.text = model.title
+        iconView.image = UIImage(systemName: model.imageSystemName ?? SFSymbolIdentifier.cloudSunFill.rawValue)?.withRenderingMode(.alwaysOriginal)
+        minTempLabel.text = "\(Int(model.minDayTemp))º"
+        maxTempLabel.text = "\(Int(model.maxDayTemp))º"
+        tempLimitsView.setup(model)
     }
     
     //  MARK: - Private Methods
@@ -120,10 +120,10 @@ extension DayWeatherCell {
         }
         
         //  MARK: - Public Methods
-        func setup(_ data: DayData) {
-            let weekTempDiff = data.maxTemp - data.minTemp
-            let minOffset = abs(data.minTemp - data.minDayTemp) / weekTempDiff
-            let maxOffset = abs(data.maxTemp - data.maxDayTemp) / weekTempDiff
+        func setup(_ model: DayViewData) {
+            let weekTempDiff = model.maxTemp - model.minTemp
+            let minOffset = abs(model.minTemp - model.minDayTemp) / weekTempDiff
+            let maxOffset = abs(model.maxTemp - model.maxDayTemp) / weekTempDiff
             
             tempLimitsView.snp.remakeConstraints { make in
                 make.trailing.equalToSuperview().multipliedBy(1 - maxOffset)
@@ -131,8 +131,8 @@ extension DayWeatherCell {
                 make.width.equalToSuperview().multipliedBy(1 - minOffset - maxOffset)
             }
             
-            if let currentTemp = data.currentTemp {
-                let currentTempOffset = abs(data.minTemp - currentTemp) / weekTempDiff
+            if let currentTemp = model.currentTemp {
+                let currentTempOffset = abs(model.minTemp - currentTemp) / weekTempDiff
                 
                 if currentTempOffset == 0 {
                     currentTempView.snp.remakeConstraints { make in

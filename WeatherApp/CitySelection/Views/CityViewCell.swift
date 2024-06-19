@@ -38,13 +38,16 @@ final class CityViewCell: UICollectionViewCell {
     }
     
     //  MARK: - Public Methods
-    func setup(_ data: TitleData) {
+    func setup(_ data: TitleViewData) {
         titleLabel.text = data.title
         subtitleLabel.text = data.subtitle
         subtitleLabel.isHidden = data.subtitle == nil
-        tempLabel.text = "\(data.currentTemp)º"
+        tempLabel.text = data.currentTemp?.formatedTemp()
         descriptionLabel.text = data.description
-        tempLimitsLabel.text = "Max: \(data.maxTemp)º, min: \(data.minTemp)º"
+        
+        if let maxTemp = data.maxTemp, let minTemp = data.minTemp {
+            tempLimitsLabel.text = "Max: \(maxTemp.formatedTemp()), min: \(minTemp.formatedTemp())"
+        }
     }
     
     //  MARK: - Private Methods

@@ -11,6 +11,7 @@ enum SFSymbolIdentifier: String {
     case ellipsisCircle = "ellipsis.circle"
     case micFill = "mic.fill"
     case cloudSun = "cloud.sun"
+    case sunFill = "sun.fill"
     case cloudSunFill = "cloud.sun.fill"
     case xCircleFill = "x.circle.fill"
     case sunMaxFill = "sun.max.fill"

@@ -7,35 +7,33 @@
 
 import UIKit
 
-struct CityWeatherData: Hashable     {
-    let titleData: TitleData
-    let dayHourlyDescription: String
-    let dayHourlyData: [DayHourlyData]
-    let dayData: [DayData]
+struct CityWeatherData: Hashable {
+    let id: Int
+    let titleData: TitleViewData
+    let dayHourlyDescription: String?
+    let dayHourlyData: [DayHourlyViewData]?
+    let dayData: [DayViewData]?
 }
 
-struct TitleData: Hashable {
-    let title: String
+struct TitleViewData: Hashable {
+    let title: String?
     let subtitle: String?
-    let currentTemp: Int
-    let description: String
-    let minTemp: Int
-    let maxTemp: Int
+    let currentTemp: Double?
+    let description: String?
+    let minTemp: Double?
+    let maxTemp: Double?
 }
 
-struct DayHourlyData: Hashable {
-    let hour: String
-    let imageSystemName: String
-    let temp: Int
-
-    var id: String {
-        "\(hour) \(imageSystemName) \(temp)"
-    }
-}
-
-struct DayData: Hashable {
+struct DayHourlyViewData: Hashable {
+    let date: Date
     let title: String
-    let imageSystemName: String
+    let imageSystemName: String?
+    let temp: String
+}
+
+struct DayViewData: Hashable {
+    let title: String
+    let imageSystemName: String?
     let minTemp: Double
     let maxTemp: Double
     let minDayTemp: Double
@@ -48,365 +46,19 @@ struct DayData: Hashable {
 }
 
 extension CityWeatherData {
-    enum ImageSystemNames: String {
-        case sunMaxFill = "sun.max.fill"
-    }
-    
-    static var mockData: [CityWeatherData] {
-        return [
-//            MARK: - First City
-            CityWeatherData(titleData:
-                        TitleData(title: "Current location",
-                                  subtitle: "Seattle",
-                                  currentTemp: 28,
-                                  description: "Mostly Sunny",
-                                  minTemp: 15,
-                                  maxTemp: 32),
-                            dayHourlyDescription: "Cloudy weather from 9:00 to 19:00, mostly sunny weather is expected at 12:00",
-                            dayHourlyData: [
-                                DayHourlyData(hour: "Now",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "09",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "10",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "11",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "12",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "13",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "14",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "15",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "16",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                                DayHourlyData(hour: "17",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 15),
-                            ],
-                            dayData: [
-                                DayData(title: "Today",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Sat",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 23),
-                                DayData(title: "Sun",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Mon",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Tue",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Wed",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Thu",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Fri",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Sat",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22)
-                            ]),
-
-//            MARK: - Second City
-            CityWeatherData(titleData: TitleData(title: "Orlando",
-                                          subtitle: nil,
-                                          currentTemp: 32,
-                                          description: "Sunny",
-                                          minTemp: 24,
-                                                 maxTemp: 36),
-                            dayHourlyDescription: "Sunny conditions will continue all day. Wind gusts up to 6mph.",
-                            dayHourlyData: [
-                                DayHourlyData(hour: "Now",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 28),
-                                DayHourlyData(hour: "12",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 28),
-                                DayHourlyData(hour: "1",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 29),
-                                DayHourlyData(hour: "2",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 30),
-                                DayHourlyData(hour: "3",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 28),
-                                DayHourlyData(hour: "4",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 27),
-                                DayHourlyData(hour: "5",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 26),
-                                DayHourlyData(hour: "6",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 24),
-                                DayHourlyData(hour: "7",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 22),
-                                DayHourlyData(hour: "8",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 18),
-                                DayHourlyData(hour: "9",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 18),
-                                DayHourlyData(hour: "10",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 17),
-                                DayHourlyData(hour: "11",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 17),
-                                DayHourlyData(hour: "12",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 16),
-                                DayHourlyData(hour: "1",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 16),
-                                DayHourlyData(hour: "2",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 16),
-                            ],
-                            dayData: [
-                                DayData(title: "Today",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Sat",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 24),
-                                DayData(title: "Sun",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Mon",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Tue",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Wed",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Thu",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Fri",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Sat",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22)
-                            ]),
-            //            MARK: - Third City
-            CityWeatherData(titleData: TitleData(title: "Chicago",
-                                                 subtitle: nil,
-                                                 currentTemp: 27,
-                                                 description: "Mostly Sunny",
-                                                 minTemp: 16,
-                                                 maxTemp: 30),
-                            dayHourlyDescription: "Cloudy conditions from 1pm-6pm, with partly cloudy conditions expected at 6pm.",
-                            dayHourlyData: [
-                                DayHourlyData(hour: "Now",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 28),
-                                DayHourlyData(hour: "12",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 28),
-                                DayHourlyData(hour: "1",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 29),
-                                DayHourlyData(hour: "2",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 30),
-                                DayHourlyData(hour: "3",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 28),
-                                DayHourlyData(hour: "4",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 27),
-                                DayHourlyData(hour: "5",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 26),
-                                DayHourlyData(hour: "6",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 24),
-                                DayHourlyData(hour: "7",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 22),
-                                DayHourlyData(hour: "8",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 18),
-                                DayHourlyData(hour: "9",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 18),
-                                DayHourlyData(hour: "10",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 17),
-                                DayHourlyData(hour: "11",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 17),
-                                DayHourlyData(hour: "12",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 16),
-                                DayHourlyData(hour: "1",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 16),
-                                DayHourlyData(hour: "2",
-                                              imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                              temp: 16),
-                            ],
-                            dayData: [
-                                DayData(title: "Today",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Sat",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 25),
-                                DayData(title: "Sun",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Mon",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Tue",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Wed",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Thu",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Fri",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22),
-                                DayData(title: "Sat",
-                                        imageSystemName: ImageSystemNames.sunMaxFill.rawValue,
-                                        minTemp: 20,
-                                        maxTemp: 37,
-                                        minDayTemp: 21,
-                                        maxDayTemp: 34,
-                                        currentTemp: 22)
-                            ])
-        ]
+    static var emptyData: CityWeatherData {
+        CityWeatherData(
+            id: .currentPlaceId,
+            titleData: TitleViewData(title: "--",
+                                     subtitle: "--",
+                                     currentTemp: nil,
+                                     description: "--",
+                                     minTemp: nil,
+                                     maxTemp: nil),
+            dayHourlyDescription: nil,
+            dayHourlyData: nil,
+            dayData: nil
+        )
     }
 }
+

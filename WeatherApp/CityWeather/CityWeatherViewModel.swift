@@ -11,13 +11,14 @@ import UIKit
 protocol CityWeatherViewModelInput {
     var output: CityWeatherViewModelOutput? { get set }
     
+    func setup(_ weatherData: CityWeatherData)
     func viewDidLoad()
 }
 
 protocol CityWeatherViewModelOutput: AnyObject {
     var sections: [CityWeatherViewModel.Section] { get set }
     
-    func setupTitle(with data: TitleData)
+    func setupTitle(with data: TitleViewData)
 }
 
 extension CityWeatherViewModel {
@@ -25,34 +26,36 @@ extension CityWeatherViewModel {
         case titleForFirstSection = "Hourly forecast"
         case titleForSecondSection = "-day forecast"
     }
-}
-
-final class CityWeatherViewModel: CityWeatherViewModelInput {
+    
+    enum Item: Hashable {
+        case dayHourlyWeather(data: DayHourlyViewData)
+        case dayWeather(data: DayViewData)
+        
+        var id: String {
+            switch self {
+            case .dayHourlyWeather(let data): return "\(data.date)"
+            case .dayWeather(let data): return data.id
+            }
+        }
+    }
+    
     struct Section: Hashable {
         let imageSystemName: String
         let title: String
         let description: String?
         let items: [Item]
     }
-    
-    enum Item: Hashable {
-        case dayHourlyWeather(data: DayHourlyData)
-        case dayWeather(data: DayData)
+}
 
-        var id: String {
-            switch self {
-            case .dayHourlyWeather(let data): return data.id
-            case .dayWeather(let data): return data.id
-            }
-        }
-    }
-    
-    private let weatherData: CityWeatherData!
+final class CityWeatherViewModel: CityWeatherViewModelInput {
+    private var weatherData: CityWeatherData = .emptyData
     
     weak var output: CityWeatherViewModelOutput?
     
-    init(weatherData: CityWeatherData?) {
-        self.weatherData = weatherData ?? CityWeatherData.mockData.first
+    func setup(_ weatherData: CityWeatherData) {
+        self.weatherData = weatherData
+        
+        viewDidLoad()
     }
     
     func viewDidLoad() {
@@ -65,11 +68,11 @@ final class CityWeatherViewModel: CityWeatherViewModelInput {
             Section(imageSystemName: SFSymbolIdentifier.clock.rawValue,
                     title: Constants.titleForFirstSection.rawValue,
                     description: weatherData.dayHourlyDescription,
-                    items: weatherData.dayHourlyData.map { .dayHourlyWeather(data: $0) }),
+                    items: weatherData.dayHourlyData?.map { .dayHourlyWeather(data: $0) } ?? []),
             Section(imageSystemName: SFSymbolIdentifier.calendar.rawValue,
-                    title: "\(weatherData.dayData.count)" + Constants.titleForSecondSection.rawValue,
+                    title: "\(weatherData.dayData?.count ?? 0)" + Constants.titleForSecondSection.rawValue,
                     description: nil,
-                    items: weatherData.dayData.map { .dayWeather(data: $0) })
+                    items: weatherData.dayData?.map { .dayWeather(data: $0) } ?? [])
         ]
     }
 }
