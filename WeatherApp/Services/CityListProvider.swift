@@ -58,7 +58,6 @@ final class CityListProviderImpl: CityListProvider {
         
         let decoder = JSONDecoder()
         cityList = try! decoder.decode([CityData].self, from: data)
-        print(#function, "selectedCityList.count: \(selectedCityList.count)")
     }
 }
 
@@ -68,8 +67,7 @@ extension CityListProviderImpl {
     func add(_ city: CityData) {
         var selectedCityList: [CityData] = selectedCityList
         selectedCityList.append(city)
-        storageManager.set(object: city, forKey: .selectedCityList)
-        print(#function, selectedCityList.count)
+        storageManager.set(object: selectedCityList, forKey: .selectedCityList)
     }
     
     func delete(_ city: CityData) {

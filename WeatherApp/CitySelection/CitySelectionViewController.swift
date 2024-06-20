@@ -41,7 +41,6 @@ final class CitySelectionViewController: UIViewController {
         didSet {
             reloadDataSource()
             setupDataToPresentedViewController()
-            print("sections.count: \(sections.count)") //TODO: delete after debug
         }
     }
     

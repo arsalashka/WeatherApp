@@ -13,7 +13,7 @@ struct CityData: Codable {
     let state: String
     let country: String
     let coordinate: Coordinate
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
