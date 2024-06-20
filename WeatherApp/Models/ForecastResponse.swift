@@ -102,13 +102,44 @@ extension ForecastResponse {
             case sunsetUnix = "sunset"
         }
         
+//        init(from decoder: any Decoder) throws {
+//            let container: KeyedDecodingContainer<ForecastResponse.CityData.CodingKeys> = try decoder.container(keyedBy: ForecastResponse.CityData.CodingKeys.self)
+//            self.id = try container.decode(Int.self, forKey: ForecastResponse.CityData.CodingKeys.id)
+//            self.name = try container.decode(String.self, forKey: ForecastResponse.CityData.CodingKeys.name)
+//            self.coordinate = try container.decode(Coordinate.self, forKey: .coordinate)
+//            self.country = try container.decode(String.self, forKey: ForecastResponse.CityData.CodingKeys.country)
+//            self.population = try container.decode(Int.self, forKey: ForecastResponse.CityData.CodingKeys.population)
+//            
+//            let timeZoneValue = try container.decode(Int.self, forKey: .timeZone)
+//            self.timeZone = TimeZone(secondsFromGMT: timeZoneValue) ?? TimeZone.current
+//            
+//            let sunriseUnix = try container.decode(Double.self, forKey: .sunriseUnix)
+//            self.sunriseDate = Date(timeIntervalSince1970: sunriseUnix)
+//            
+//            let sunsetUnix = try container.decode(Double.self, forKey: .sunsetUnix)
+//            self.sunsetDate = Date(timeIntervalSince1970: sunsetUnix)
+//        }
+        
         init(from decoder: any Decoder) throws {
-            let container: KeyedDecodingContainer<ForecastResponse.CityData.CodingKeys> = try decoder.container(keyedBy: ForecastResponse.CityData.CodingKeys.self)
-            self.id = try container.decode(Int.self, forKey: ForecastResponse.CityData.CodingKeys.id)
-            self.name = try container.decode(String.self, forKey: ForecastResponse.CityData.CodingKeys.name)
+
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+//            guard let saveID = try decodeItem(for: Int.self, key: CodingKeys.id) else { return }
+            self.id = try decodeItem(for: Int.self, key: CodingKeys.id)
+
+            func decodeItem<T: Decodable>(for type: T.Type, key: CodingKeys) throws -> T {
+                try container.decode(T.self, forKey: key)
+            }
+            
+            
+            
+//            self.id = try container.decode(Int.self, forKey: ForecastResponse.CityData.CodingKeys.id)
+            
+            
+            self.name = try container.decode(String.self, forKey: .name)
             self.coordinate = try container.decode(Coordinate.self, forKey: .coordinate)
-            self.country = try container.decode(String.self, forKey: ForecastResponse.CityData.CodingKeys.country)
-            self.population = try container.decode(Int.self, forKey: ForecastResponse.CityData.CodingKeys.population)
+            self.country = try container.decode(String.self, forKey: .country)
+            self.population = try container.decode(Int.self, forKey: .population)
             
             let timeZoneValue = try container.decode(Int.self, forKey: .timeZone)
             self.timeZone = TimeZone(secondsFromGMT: timeZoneValue) ?? TimeZone.current

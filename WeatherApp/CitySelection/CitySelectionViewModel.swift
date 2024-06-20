@@ -61,7 +61,7 @@ final class CitySelectionViewModel: CitySelectionViewModelInput {
             let sortedData = cityList.compactMap { data[$0.id] ?? $0.weatherData }
             prepareSections(with: sortedData)
         } errorHandler: { error in
-            print(#function, error.description)
+            print(error.description)
         }
     }
     
@@ -73,7 +73,7 @@ final class CitySelectionViewModel: CitySelectionViewModelInput {
                  let sortedData = cityList.compactMap { data[$0.id] ?? $0.weatherData }
                  prepareSections(with: sortedData)
              } errorHandler: { error in
-                 print(#function, error.description)
+                 print(error.description)
              }
         }
     
