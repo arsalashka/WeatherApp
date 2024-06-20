@@ -29,6 +29,9 @@ final class CityWeatherViewController: UIViewController {
         }
     }
     
+    var cityID: Int?
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

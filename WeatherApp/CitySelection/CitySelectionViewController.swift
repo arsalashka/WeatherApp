@@ -8,6 +8,11 @@
 import UIKit
 import SnapKit
 
+protocol CitySelectionViewControllerDelegate {
+    func sceneWillEnterForeground()
+    func sceneDidEnterBackground()
+}
+
 extension CitySelectionViewController {
     typealias Section = CitySelectionViewModel.Section
     typealias Item = CityWeatherData
@@ -23,13 +28,6 @@ extension CitySelectionViewController {
 
 final class CitySelectionViewController: UIViewController {
     //  MARK: - Properties
-    var viewModel: CitySelectionViewModelInput?
-    var sections: [Section] = [] {
-        didSet {
-            reloadDataSource()
-        }
-    }
-    
     private var collectionView: UICollectionView!
     private let unitSelectionView = UnitSelectionView()
 
@@ -37,6 +35,14 @@ final class CitySelectionViewController: UIViewController {
     private var snapshot: NSDiffableDataSourceSnapshot<Section, Item>! = nil
     
     private var presentedCityID: Int?
+    
+    var viewModel: CitySelectionViewModelInput?
+    var sections: [Section] = [] {
+        didSet {
+            reloadDataSource()
+            setupDataToPresentedViewController()
+        }
+    }
     
     //  MARK: - Lifecycle
     override func viewDidLoad() {
@@ -163,10 +169,20 @@ final class CitySelectionViewController: UIViewController {
         
         if let data { viewModel.setup(data) }
         viewController.viewModel = viewModel
+        viewController.cityID = data?.id
         viewController.modalPresentationStyle = .fullScreen
         
-        present(viewController, animated: animated) { [weak self] in
-            self?.viewModel?.getForecastForCity(with: data?.id)
+        present(viewController, animated: animated)
+        self.viewModel?.getForecastForCity(with: data?.id)
+    }
+    
+    private func setupDataToPresentedViewController() {
+        DispatchQueue.main.async { [self] in
+            guard let weatherData = sections.first?.items,
+                  let presentedCityWeatherController = presentedViewController as? CityWeatherViewController,
+                  let data = weatherData.first(where: { $0.id == presentedCityWeatherController.cityID }) else { return }
+            
+            presentedCityWeatherController.viewModel.setup(data)
         }
     }
     
@@ -187,11 +203,12 @@ final class CitySelectionViewController: UIViewController {
     }
     
     private func setupSearchController() {
-        let searchResultController = CitySearchViewController()
-        searchResultController.viewModel = CitySearchViewModel(cityListProvider: CityListProviderImpl())
-        let searchController = UISearchController(searchResultsController: searchResultController)
+        let citySearchViewController = CitySearchViewController()
+        citySearchViewController.viewModel = CitySearchViewModel(cityListProvider: CityListProviderImpl())
+        citySearchViewController.delegate = self
+        let searchController = UISearchController(searchResultsController: citySearchViewController)
         
-        searchController.searchResultsUpdater = searchResultController
+        searchController.searchResultsUpdater = citySearchViewController
         searchController.showsSearchResultsController = true
         
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -217,6 +234,10 @@ final class CitySelectionViewController: UIViewController {
     //  MARK: - Button Pressed Methods
     @IBAction private func rightBarButtonItemPressed() {
         unitSelectionView.isHidden  = unitSelectionView.isHidden ? false : true
+    }
+    //  MARK: - Public Methods
+    func sceneWillEnterForeground() {
+        viewModel?.getWeatherForCityList()
     }
 }
 
@@ -254,10 +275,12 @@ extension CitySelectionViewController: UICollectionViewDelegate {
 }
 
 //  MARK: - CitySelectionViewModelOutput
-extension CitySelectionViewController: CitySelectionViewModelOutput {
-    func setup(_ weatherData: CityWeatherData) {
-        DispatchQueue.main.async { [self] in
-            (presentedViewController as? CityWeatherViewController)?.viewModel.setup(weatherData)
-        }
+extension CitySelectionViewController: CitySelectionViewModelOutput {}
+
+// MARK: - CitySearchViewControllerDelegate
+extension CitySelectionViewController: CitySearchViewControllerDelegate {
+    func reloadData() {
+        navigationItem.searchController?.searchBar.text = nil
+        viewModel?.getWeatherForCityList()
     }
 }

@@ -22,18 +22,15 @@ extension APIEndpointProvider {
 enum Endpoint {
     case weather(id: Int)
     case forecast(id: Int)
-    case coordWeather(lat: Double, lon: Double)
-    case coordForecast(lat: Double, lon: Double)
+    case coordWeather(Coordinate)
+    case coordForecast(Coordinate)
     case group(ids: [Int])
-    
+
     var pathComponent: String {
         switch self {
-        case .weather, .coordWeather:
-            return "weather"
-        case .forecast, .coordForecast:
-            return "forecast"
-        case .group:
-            return "group"
+        case .weather, .coordWeather: return "weather"
+        case .forecast, .coordForecast: return "forecast"
+        case .group: return "group"
         }
     }
 }
@@ -86,10 +83,10 @@ final class APIEndpointProvider {
         switch endpoint {
         case .weather(let id), .forecast(let id):
             url.append(queryItems: [URLQueryItem(name: "id", value: String(id))])
-        case .coordWeather(let lat, let lon), .coordForecast(let lat, let lon):
+        case .coordWeather(let coordinate), .coordForecast(let coordinate):
             url.append(queryItems: [
-                URLQueryItem(name: "lat", value: String(lat)),
-                URLQueryItem(name: "lon", value: String(lon))
+                URLQueryItem(name: "lat", value: String(coordinate.lat)),
+                URLQueryItem(name: "lon", value: String(coordinate.lon))
             
             ])
         case .group(let ids):

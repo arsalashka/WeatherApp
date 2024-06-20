@@ -7,16 +7,16 @@
 
 import UIKit
 
+//  MARK: - Protocols
 protocol CitySelectionViewModelInput {
     var output: CitySelectionViewModelOutput? { get set }
     
     func getForecastForCity(with id: Int?)
+    func getWeatherForCityList()
 }
 
 protocol CitySelectionViewModelOutput: AnyObject {
     var sections: [CitySelectionViewModel.Section] { get set }
-    
-    func setup(_ weatherData: CityWeatherData)
 }
 
 extension CitySelectionViewModel {
@@ -34,26 +34,50 @@ extension CitySelectionViewModel {
     }
 }
 
+//  MARK: - Class
 final class CitySelectionViewModel: CitySelectionViewModelInput {
+    private let storageManager = UDStorageManager()
+    private let cityListProvider: CityListProvider = CityListProviderImpl()
+    
     weak var output: CitySelectionViewModelOutput?
     private var weatherProvider: WeatherProvider?
+    
+    var cityList: [CityData] {
+        cityListProvider.selectedCityList
+    }
     
     init(weatherProvider: WeatherProvider) {
         self.weatherProvider = weatherProvider
         self.weatherProvider?.delegate = self
+        prepareSections(with: cityList.map(\.weatherData))
+        getWeatherForCityList()
     }
     
-    func getForecastForCity(with id: Int?) {
-        guard let id else { return }
-
-        weatherProvider?.getForecastForCity(with: id) { [weak self] weatherData in
-            self?.output?.setup(weatherData)
-            self?.prepareSections(with: [weatherData])
+    //  MARK: - Public Methods
+    func getWeatherForCityList() {
+        weatherProvider?.getWeatherFor(cityList) { [weak self] data in
+            guard let self else { return }
+            
+            let sortedData = cityList.compactMap { data[$0.id] ?? $0.weatherData }
+            prepareSections(with: sortedData)
         } errorHandler: { error in
-            print(#function, error.description)
+            print(error.description)
         }
     }
     
+    func getForecastForCity(with id: Int?) {
+             guard let id, let cityData = cityList.first(where: { $0.id == id }) else { return }
+
+             weatherProvider?.getForecastForCity(cityData) { [weak self] data in
+                 guard let self else { return }
+                 let sortedData = cityList.compactMap { data[$0.id] ?? $0.weatherData }
+                 prepareSections(with: sortedData)
+             } errorHandler: { error in
+                 print(error.description)
+             }
+        }
+    
+    //  MARK: - Private Methods
     private func prepareSections(with data: [CityWeatherData]) {
         output?.sections = [Section(items: data, footerAttributedString: createFooterString())]
     }
@@ -74,8 +98,10 @@ final class CitySelectionViewModel: CitySelectionViewModelInput {
     }
 }
 
+//  MARK: - WeatherProviderDelegate
 extension CitySelectionViewModel: WeatherProviderDelegate {
-    func setCurrentWeather(_ data: [CityWeatherData]) {
-        prepareSections(with: data)
+    func setCurrentWeather(_ data: [Int: CityWeatherData]) {
+        let sortedData = cityList.compactMap { data[$0.id] ?? $0.weatherData }
+        prepareSections(with: sortedData)
     }
 }
