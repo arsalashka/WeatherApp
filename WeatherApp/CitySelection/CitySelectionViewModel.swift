@@ -12,7 +12,13 @@ protocol CitySelectionViewModelInput {
     var output: CitySelectionViewModelOutput? { get set }
     
     func getForecastForCity(with id: Int?)
-    func getWeatherForCityList()
+    func getWeatherForCityList(forced: Bool)
+}
+
+extension CitySelectionViewModelInput {
+    func getWeatherForCityList(forced: Bool = false) {
+        getWeatherForCityList(forced: forced)
+    }
 }
 
 protocol CitySelectionViewModelOutput: AnyObject {
@@ -37,7 +43,7 @@ extension CitySelectionViewModel {
 //  MARK: - Class
 final class CitySelectionViewModel: CitySelectionViewModelInput {
     private let storageManager = UDStorageManager()
-    private let cityListProvider: CityListProvider = CityListProviderImpl()
+    private let cityListProvider = CityListProviderImpl.shared
     
     weak var output: CitySelectionViewModelOutput?
     private var weatherProvider: WeatherProvider?
@@ -54,8 +60,8 @@ final class CitySelectionViewModel: CitySelectionViewModelInput {
     }
     
     //  MARK: - Public Methods
-    func getWeatherForCityList() {
-        weatherProvider?.getWeatherFor(cityList) { [weak self] data in
+    func getWeatherForCityList(forced: Bool) {
+        weatherProvider?.getWeatherFor(cityList, forced: forced) { [weak self] data in
             guard let self else { return }
             
             let sortedData = cityList.compactMap { data[$0.id] ?? $0.weatherData }

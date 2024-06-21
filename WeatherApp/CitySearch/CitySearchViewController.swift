@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import CoreData
 
 protocol CitySearchViewControllerDelegate: AnyObject {
     func reloadData()
