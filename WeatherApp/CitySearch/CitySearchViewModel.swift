@@ -24,12 +24,11 @@ final class CitySearchViewModel: CitySearchViewModelInput {
     weak var output: CitySearchViewModelOutput?
     
     private let storageManager = UDStorageManager()
-    private var cityListProvider: CityListProvider
+    private var cityDataProvider: CityDataProvider
     private var searchQuery = ""
     
-    init(cityListProvider: CityListProvider) {
-        self.cityListProvider = cityListProvider
-        output?.cityList = cityListProvider.cityList
+    init(cityDataProvider: CityDataProvider) {
+        self.cityDataProvider = cityDataProvider
     }
     
     func filterCity(with searchQuery: String) {
@@ -38,15 +37,13 @@ final class CitySearchViewModel: CitySearchViewModelInput {
         if searchQuery.isEmpty {
             output?.cityList = []
         } else {
-            output?.cityList = cityListProvider.cityList.filter {
-                $0.name.lowercased().contains(searchQuery)
-                || $0.country.lowercased().contains(searchQuery)
-                || $0.state.lowercased().contains(searchQuery)
+            cityDataProvider.getCityList(with: searchQuery) { [weak self] cityList in
+                self?.output?.cityList = cityList ?? []
             }
         }
     }
     
     func select(_ city: CityData) {
-        cityListProvider.add(city)
+        cityDataProvider.add(city)
     }
 }
