@@ -26,7 +26,15 @@ extension CitySelectionViewController {
     }
 }
 
-final class CitySelectionViewController: UIViewController {
+final class CitySelectionViewController: UIViewController, LocationProviderDelegate { //TODO: delete
+    func setCurrentLocation(_ location: Coordinate?) {
+//        print("CURRENT LOCATION: ", location ?? "error")
+    }
+    
+    func presentAlert(_ alertController: UIAlertController) { //TODO: delete
+        present(alertController, animated: true)
+    }
+    
     //  MARK: - Properties
     private var collectionView: UICollectionView!
     private let unitSelectionView = UnitSelectionView()
@@ -44,9 +52,20 @@ final class CitySelectionViewController: UIViewController {
         }
     }
     
+    //TODO: delete this block
+    private let locationProvider = LocationProvider()
+    
+    
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locationProvider.delegate = self //TODO: delete
+        print("CURRENT LOCATION: ", locationProvider.getCurrentLocation())
+        
+        
+        
+        
         
         view.backgroundColor = .black
         
@@ -204,7 +223,7 @@ final class CitySelectionViewController: UIViewController {
     
     private func setupSearchController() {
         let citySearchViewController = CitySearchViewController()
-        citySearchViewController.viewModel = CitySearchViewModel(cityListProvider: CityListProviderImpl.shared)
+        citySearchViewController.viewModel = CitySearchViewModel(cityDataProvider: CityDataProviderImpl.shared)
         citySearchViewController.delegate = self
         let searchController = UISearchController(searchResultsController: citySearchViewController)
         

@@ -8,30 +8,39 @@
 import UIKit
 
 protocol WeatherProviderDelegate: AnyObject {
+    
     func setCurrentWeather(_ data: [Int: CityWeatherData])
 }
 
 protocol WeatherProvider {
-    var delegate: WeatherProviderDelegate? { get set }
     
-    func getWeatherFor(_ cityList: [CityData],
-                       forced: Bool,
-                       completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
-                       errorHandler: ((AppError) -> Void)?)
-    func getForecastForCity(_ cityData: CityData,
-                            completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
-                            errorHandler: ((AppError) -> Void)?)
+    var delegate: WeatherProviderDelegate? { get set }
+
+    func getWeather(city: CityData,
+                    completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
+                    errorHandler: ((AppError) -> Void)?)
+    func getWeather(cityList: [CityData],
+                    forced: Bool,
+                    completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
+                    errorHandler: ((AppError) -> Void)?)
+    func getForecast(cityData: CityData,
+                     completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
+                     errorHandler: ((AppError) -> Void)?)
 }
 
 final class WeatherProviderImpl: WeatherProvider {
+    
     weak var delegate: WeatherProviderDelegate?
     private let dataProvider = APIDataProvider()
     private let storageManager = UDStorageManager()
+    private let cityDataProvider = CityDataProviderImpl.shared
     
     private var weatherDataCache: [Int: CityWeatherData] = [:]
     private var weatherCache: [Int: WeatherResponse] = [:]
     private var forecastCache: [Int: ForecastResponse] = [:]
     private var updatedForecastIDs: Set<Int> = []
+    private var weatherIsLoading = false
+    private var forecastIsLoading: [Int: Bool] = [:]
     
     private var isNeedUploadNewWeatherData: Bool {
         guard let prevUploadData: Date = storageManager.object(forKey: .weatherUploadDate),
@@ -42,102 +51,125 @@ final class WeatherProviderImpl: WeatherProvider {
         return weatherDataCache.isEmpty || nextUploadDate < Date()
     }
     
-    func getWeatherFor(_ cityList: [CityData],
-                       forced: Bool,
-                       completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
-                       errorHandler: ((AppError) -> Void)?) {
-        if isNeedUploadNewWeatherData || forced {
+    func getWeather(city: CityData,
+                    completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
+                    errorHandler: ((AppError) -> Void)?) {
+        
+        let endpoint: Endpoint = city.id == .currentPlaceID ?
+            .coordWeather(city.coordinate) :
+            .weather(id: city.id)
+        
+        dataProvider.getData(
+            for: endpoint,
+            completionHandler: { [weak self] (weather: WeatherResponse) in
+                guard let self else { return }
+                weatherCache[city.id] = weather
+                
+                let weatherData = prepareCityWeatherData(for: city.id)
+                weatherDataCache[city.id] = weatherData
+                
+                completionHandler(weatherDataCache)},
+            errorHandler: { error in
+                errorHandler?(error) }
+        )
+    }
+    
+    func getWeather(cityList: [CityData],
+                    forced: Bool,
+                    completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
+                    errorHandler: ((AppError) -> Void)?) {
+        
+        if (isNeedUploadNewWeatherData || forced) && !weatherIsLoading {
+            weatherIsLoading = true
             updatedForecastIDs = []
             var cityListWeatherFetched = cityList.count == 1
             var cityListWeather: [Int: CityWeatherData] = [:]
             
             if let currentPlace = cityList.first(where: { $0.id == .currentPlaceID }) {
-                getWeatherForCity(
-                    currentPlace,
+                
+                getWeather(
+                    city: currentPlace,
                     completionHandler: { data in
-                        cityListWeather[.currentPlaceID] = data
-                        
-                        if cityListWeatherFetched {
-                            completionHandler(cityListWeather)
-                        }
+                        cityListWeather[.currentPlaceID] = data[.currentPlaceID]
+                        if cityListWeatherFetched { succeedCompletion(cityListWeather) }
                     },
-                    errorHandler: { error in
+                    errorHandler: { [weak self] error in
                         errorHandler?(error)
+                        self?.weatherIsLoading = false
                     }
                 )
             }
             
-            getWeatherForCityGroup(
-                cityList.filter { $0.id != .currentPlaceID },
-                completionHandler: { data in
-                    data.forEach { key, value in
-                        cityListWeather[key] = value
+            let filteredCityList = cityList.filter { $0.id != .currentPlaceID }
+            
+            if !filteredCityList.isEmpty {
+                getWeather(
+                    for: filteredCityList,
+                    completionHandler: { data in
+                        data.forEach { key, value in
+                            cityListWeather[key] = value
+                        }
+                        cityListWeatherFetched = true
+                        
+                        if cityListWeather[.currentPlaceID] != nil {
+                            succeedCompletion(cityListWeather)
+                        }
+                        
+                        
+                    }, errorHandler: { [weak self] error in
+                        errorHandler?(error)
+                        self?.weatherIsLoading = false
                     }
-                    cityListWeatherFetched = true
+                )
+            }
+        } else {
+            completionHandler(weatherDataCache)
+        }
+        
+        func succeedCompletion(_ cityListWeather: [Int: CityWeatherData]) {
+            completionHandler(cityListWeather)
+            storageManager.set(object: Date(), forKey: .weatherUploadDate)
+            weatherIsLoading = false
+        }
+    }
+    
+    func getForecast(cityData: CityData, 
+                     completionHandler: @escaping ([Int : CityWeatherData]) -> Void,
+                     errorHandler: ((AppError) -> Void)?) {
+        if !updatedForecastIDs.contains(cityData.id) && (forecastIsLoading[cityData.id] ?? false) != true {
+            forecastIsLoading[cityData.id] = true
+            
+            let endpoint: Endpoint = cityData.id == .currentPlaceID ?
+                .coordForecast(cityData.coordinate) :
+                .forecast(id: cityData.id)
+            
+            dataProvider.getData(
+                for: endpoint,
+                completionHandler: { [weak self] (forecast: ForecastResponse) in
+                    guard let self else { return }
                     
-                    if cityListWeather[.currentPlaceID] != nil {
-                        completionHandler(cityListWeather)
-                    }
+                    forecastCache[cityData.id] = forecast
+                    updatedForecastIDs.insert(cityData.id)
+                    
+                    let weatherData = prepareCityWeatherData(for: cityData.id)
+                    weatherDataCache[cityData.id] = weatherData
+                    
+                    completionHandler(weatherDataCache)
+                    forecastIsLoading[cityData.id] = nil
                 },
                 errorHandler: { error in
                     errorHandler?(error)
                 }
             )
-            
-            storageManager.set(object: Date(), forKey: .weatherUploadDate)
-        } else {
-            delegate?.setCurrentWeather(weatherDataCache)
         }
-    }
-    
-    func getForecastForCity(_ cityData: CityData,
-                            completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
-                            errorHandler: ((AppError) -> Void)?) {
-        if !updatedForecastIDs.contains(cityData.id) {
-            let endpoint: Endpoint = cityData.id == .currentPlaceID
-            ? .coordForecast(cityData.coordinate)
-            : .forecast(id: cityData.id)
-            
-            dataProvider.getData(for: endpoint) { [weak self] (forecast: ForecastResponse) in
-                guard let self else { return }
-                
-                forecastCache[cityData.id] = forecast
-                updatedForecastIDs.insert(cityData.id)
-                
-                let weatherData = prepareCityWeatherData(for: cityData.id)
-                weatherDataCache[cityData.id] = weatherData
-                completionHandler(weatherDataCache)
-            } errorHandler: { error in
-                errorHandler?(error)
-            }
-        }
-    }
+    } 
 }
 
+//  MARK: - Extension
 private extension WeatherProviderImpl {
-    func getWeatherForCity(_ cityData: CityData,
-                           completionHandler: @escaping (CityWeatherData) -> Void,
-                           errorHandler: ((AppError) -> Void)?) {
-        let endpoint: Endpoint = cityData.id == .currentPlaceID
-        ? .coordWeather(cityData.coordinate)
-        : .weather(id: cityData.id)
-        
-        dataProvider.getData(for: endpoint) { [weak self] (weather: WeatherResponse) in
-            guard let self else { return }
-            
-            weatherCache[cityData.id] = weather
-            
-            let weatherData = prepareCityWeatherData(for: cityData.id)
-            weatherDataCache[cityData.id] = weatherData
-            completionHandler(weatherData)
-        } errorHandler: { error in
-            errorHandler?(error)
-        }
-    }
-    
-    func getWeatherForCityGroup(_ cityGroup: [CityData],
-                                completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
-                                errorHandler: ((AppError) -> Void)?) {
+    func getWeather(for cityGroup: [CityData],
+                    completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
+                    errorHandler: ((AppError) -> Void)?) {
         dataProvider.getData(for: .group(ids: cityGroup.map(\.id))) { [weak self] (group: GroupResponse) in
             guard let self else { return }
             
@@ -147,7 +179,6 @@ private extension WeatherProviderImpl {
                 let weatherData = self.prepareCityWeatherData(for: id)
                 self.weatherDataCache[id] = weatherData
             }
-            
             completionHandler(weatherDataCache)
         } errorHandler: { error in
             print(#function, error.description)

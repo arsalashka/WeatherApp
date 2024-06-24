@@ -27,13 +27,13 @@ private enum Constants: String {
     case fileExtension = "json"
 }
 
-final class CityListProviderImpl: CityDataProvider {
-    static var shared: CityDataProvider = CityListProviderImpl()
+final class CityDataProviderImpl: CityDataProvider {
+    static var shared: CityDataProvider = CityDataProviderImpl()
     
     private let udStorageManager = UDStorageManager()
     private let cdStorageManager = CDStorageManager()
     
-    private var currentPlaceCoord = Coordinate(lat: 28.5383, lon: -81.3792)
+    private var currentPlaceCoord = Coordinate(lat: 41.8531, lon: -87.6614)
     
     var selectedCityList: [CityData] {
         get {
@@ -79,7 +79,7 @@ final class CityListProviderImpl: CityDataProvider {
 }
 
 //  MARK: - Provider Methods
-extension CityListProviderImpl {
+extension CityDataProviderImpl {
     
     func add(_ city: CityData) {
         var selectedCityList: [CityData] = selectedCityList

@@ -43,13 +43,13 @@ extension CitySelectionViewModel {
 //  MARK: - Class
 final class CitySelectionViewModel: CitySelectionViewModelInput {
     private let storageManager = UDStorageManager()
-    private let cityListProvider = CityListProviderImpl.shared
+    private let cityDataProvider = CityDataProviderImpl.shared
     
     weak var output: CitySelectionViewModelOutput?
     private var weatherProvider: WeatherProvider?
     
     var cityList: [CityData] {
-        cityListProvider.selectedCityList
+        cityDataProvider.selectedCityList
     }
     
     init(weatherProvider: WeatherProvider) {
