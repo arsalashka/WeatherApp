@@ -7,11 +7,13 @@
 
 import UIKit
 
+//  MARK: - Protocol WeatherProviderDelegate
 protocol WeatherProviderDelegate: AnyObject {
     
     func setCurrentWeather(_ data: [Int: CityWeatherData])
 }
 
+//  MARK: - Protocol WeatherProvider
 protocol WeatherProvider {
     
     var delegate: WeatherProviderDelegate? { get set }
@@ -28,6 +30,7 @@ protocol WeatherProvider {
                      errorHandler: ((AppError) -> Void)?)
 }
 
+//  MARK: - Class WeatherProviderImpl
 final class WeatherProviderImpl: WeatherProvider {
     
     weak var delegate: WeatherProviderDelegate?
@@ -51,6 +54,7 @@ final class WeatherProviderImpl: WeatherProvider {
         return weatherDataCache.isEmpty || nextUploadDate < Date()
     }
     
+    //  MARK: - Public Methods
     func getWeather(city: CityData,
                     completionHandler: @escaping ([Int: CityWeatherData]) -> Void,
                     errorHandler: ((AppError) -> Void)?) {
@@ -162,10 +166,10 @@ final class WeatherProviderImpl: WeatherProvider {
                 }
             )
         }
-    } 
+    }
 }
 
-//  MARK: - Extension
+//  MARK: - Private Extension
 private extension WeatherProviderImpl {
     func getWeather(for cityGroup: [CityData],
                     completionHandler: @escaping ([Int: CityWeatherData]) -> Void,

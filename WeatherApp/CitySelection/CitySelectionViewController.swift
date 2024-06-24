@@ -26,15 +26,7 @@ extension CitySelectionViewController {
     }
 }
 
-final class CitySelectionViewController: UIViewController, LocationProviderDelegate { //TODO: delete
-    func setCurrentLocation(_ location: Coordinate?) {
-//        print("CURRENT LOCATION: ", location ?? "error")
-    }
-    
-    func presentAlert(_ alertController: UIAlertController) { //TODO: delete
-        present(alertController, animated: true)
-    }
-    
+final class CitySelectionViewController: UIViewController {
     //  MARK: - Properties
     private var collectionView: UICollectionView!
     private let unitSelectionView = UnitSelectionView()
@@ -52,20 +44,9 @@ final class CitySelectionViewController: UIViewController, LocationProviderDeleg
         }
     }
     
-    //TODO: delete this block
-    private let locationProvider = LocationProvider()
-    
-    
     //  MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        locationProvider.delegate = self //TODO: delete
-        print("CURRENT LOCATION: ", locationProvider.getCurrentLocation())
-        
-        
-        
-        
         
         view.backgroundColor = .black
         
@@ -197,11 +178,15 @@ final class CitySelectionViewController: UIViewController, LocationProviderDeleg
     
     private func setupDataToPresentedViewController() {
         DispatchQueue.main.async { [self] in
-            guard let weatherData = sections.first?.items,
-                  let presentedCityWeatherController = presentedViewController as? CityWeatherViewController,
+            guard let presentedCityWeatherController = presentedViewController as? CityWeatherViewController,
+                  let weatherData = sections.first?.items,
                   let data = weatherData.first(where: { $0.id == presentedCityWeatherController.cityID }) else { return }
             
-            presentedCityWeatherController.viewModel.setup(data)
+            if data.dayHourlyData == nil {
+                viewModel?.getForecastForCity(with: data.id)
+            } else {
+                presentedCityWeatherController.viewModel.setup(data)
+            }
         }
     }
     
@@ -223,7 +208,7 @@ final class CitySelectionViewController: UIViewController, LocationProviderDeleg
     
     private func setupSearchController() {
         let citySearchViewController = CitySearchViewController()
-        citySearchViewController.viewModel = CitySearchViewModel(cityDataProvider: CityDataProviderImpl.shared)
+        citySearchViewController.viewModel = CitySearchViewModel()
         citySearchViewController.delegate = self
         let searchController = UISearchController(searchResultsController: citySearchViewController)
         
@@ -298,8 +283,8 @@ extension CitySelectionViewController: CitySelectionViewModelOutput {}
 
 // MARK: - CitySearchViewControllerDelegate
 extension CitySelectionViewController: CitySearchViewControllerDelegate {
-    func reloadData() {
+    func add(_ city: CityData) {
         navigationItem.searchController?.searchBar.text = nil
-        viewModel?.getWeatherForCityList(forced: true)
+        viewModel?.getWeather(for: city)
     }
 }
