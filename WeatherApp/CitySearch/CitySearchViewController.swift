@@ -10,7 +10,7 @@ import SnapKit
 import CoreData
 
 protocol CitySearchViewControllerDelegate: AnyObject {
-    func reloadData()
+    func add(_ city: CityData)
 }
 
 final class CitySearchViewController: UIViewController {
@@ -110,7 +110,7 @@ extension CitySearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         viewModel.select(cityList[indexPath.row])
-        delegate?.reloadData()
+        delegate?.add(cityList[indexPath.row])
         dismiss(animated: true)
     }
 }

@@ -24,12 +24,7 @@ final class CitySearchViewModel: CitySearchViewModelInput {
     weak var output: CitySearchViewModelOutput?
     
     private let storageManager = UDStorageManager()
-    private var cityDataProvider: CityDataProvider
-    private var searchQuery = ""
-    
-    init(cityDataProvider: CityDataProvider) {
-        self.cityDataProvider = cityDataProvider
-    }
+    private var cityDataProvider: CityDataProvider = CityDataProviderImpl.shared
     
     func filterCity(with searchQuery: String) {
         output?.searchQuery = searchQuery
